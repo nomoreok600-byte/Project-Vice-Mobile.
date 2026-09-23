@@ -4,108 +4,330 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f7f7f5">
-<title>Tile Master Arcade</title>
+<title>Tile Master — MRB Studio</title>
+
 <style>
 :root {
   color-scheme: light;
-  --bg:#f7f7f5; --surface:#fff; --ink:#232521; --muted:#858981;
-  --line:#e7e8e3; --accent:#506b59; --soft:#e9f0ea; --bad:#b85850;
+  --bg:#f7f7f5;
+  --surface:#fff;
+  --ink:#232521;
+  --muted:#858981;
+  --line:#e7e8e3;
+  --accent:#506b59;
+  --soft:#e9f0ea;
+  --bad:#b85850;
   --radius:17px;
 }
 * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 body {
-  margin:0; min-height:100vh; min-height:100dvh; background:var(--bg);
-  color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+  margin:0;
+  min-height:100vh;
+  min-height:100dvh;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
   overscroll-behavior:none;
 }
 button,input { font:inherit; color:inherit; }
 button { cursor:pointer; touch-action:manipulation; }
-.app { width:min(100% - 28px, 760px); margin:0 auto; padding:18px 0 max(22px,env(safe-area-inset-bottom)); }
-header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:22px; }
+
+.app {
+  width:min(100% - 28px,760px);
+  margin:0 auto;
+  padding:18px 0 max(22px,env(safe-area-inset-bottom));
+}
+header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:22px;
+}
 .brand { display:flex; align-items:center; gap:11px; }
 .logo {
-  width:43px; height:43px; display:grid; place-items:center;
-  border-radius:14px; color:var(--accent); background:var(--soft);
+  width:43px;
+  height:43px;
+  display:grid;
+  place-items:center;
+  border-radius:14px;
+  color:var(--accent);
+  background:var(--soft);
 }
 .logo svg { width:25px; height:25px; }
 h1 { margin:0; font-size:21px; letter-spacing:-.6px; }
 .subtitle { margin:3px 0 0; color:var(--muted); font-size:12px; }
 .top-actions { display:flex; gap:7px; }
+
 .icon-btn,.back {
-  min-height:40px; padding:8px 11px; border:1px solid var(--line);
-  border-radius:12px; background:var(--surface); color:var(--muted); font-size:12px;
+  min-height:40px;
+  padding:8px 11px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--surface);
+  color:var(--muted);
+  font-size:12px;
 }
-.icon-btn svg,.back svg { width:16px; height:16px; vertical-align:-4px; margin-right:4px; }
+.icon-btn svg,.back svg {
+  width:16px;
+  height:16px;
+  vertical-align:-4px;
+  margin-right:4px;
+}
+
 .intro { margin:0 0 15px; }
 .intro h2 { margin:0; font-size:21px; letter-spacing:-.5px; }
 .intro p { margin:5px 0 0; color:var(--muted); font-size:13px; line-height:1.5; }
+
 .grid {
-  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:11px;
 }
 .game-card {
-  display:flex; align-items:center; gap:12px; min-height:91px; padding:14px;
-  text-align:left; border:1px solid var(--line); border-radius:var(--radius);
-  background:var(--surface); box-shadow:0 2px 6px #20282006;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-height:91px;
+  padding:14px;
+  text-align:left;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:var(--surface);
+  box-shadow:0 2px 6px #20282006;
 }
 .game-card:active { transform:scale(.985); }
 .game-icon {
-  width:43px; height:43px; flex:0 0 43px; display:grid; place-items:center;
-  border-radius:14px; color:var(--accent); background:var(--soft);
+  width:43px;
+  height:43px;
+  flex:0 0 43px;
+  display:grid;
+  place-items:center;
+  border-radius:14px;
+  color:var(--accent);
+  background:var(--soft);
 }
 .game-icon svg { width:23px; height:23px; }
 .card-copy { min-width:0; flex:1; }
 .card-copy strong { display:block; font-size:14px; }
-.card-copy small { display:block; margin-top:4px; color:var(--muted); font-size:11px; line-height:1.35; }
+.card-copy small {
+  display:block;
+  margin-top:4px;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.35;
+}
 .best { color:var(--muted); font-size:10px; text-align:right; white-space:nowrap; }
 .best strong { display:block; color:var(--accent); font-size:16px; }
+
 .game-screen { min-height:65vh; display:flex; flex-direction:column; }
-.game-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:15px; }
+.game-head {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:15px;
+}
 .game-head h2 { margin:0; font-size:20px; }
-.score-line { display:flex; justify-content:space-between; gap:12px; padding:12px 14px; border:1px solid var(--line); border-radius:14px; background:var(--surface); }
+.game-head small { color:var(--muted); }
+.score-line {
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--surface);
+}
 .score-line span { color:var(--muted); font-size:12px; }
 .score-line strong { font-size:23px; font-variant-numeric:tabular-nums; }
-.progress { height:6px; margin-top:9px; overflow:hidden; border-radius:9px; background:#e9eae6; }
-.fill { width:100%; height:100%; transform-origin:left; transform:scaleX(1); background:var(--accent); }
-.prompt { min-height:54px; display:grid; place-items:center; margin:14px 0; text-align:center; }
+
+.progress-label {
+  display:flex;
+  justify-content:space-between;
+  margin-top:12px;
+  color:var(--muted);
+  font-size:12px;
+}
+.progress {
+  height:6px;
+  margin-top:7px;
+  overflow:hidden;
+  border-radius:9px;
+  background:#e9eae6;
+}
+.fill {
+  width:100%;
+  height:100%;
+  transform-origin:left;
+  transform:scaleX(1);
+  background:var(--accent);
+}
+.prompt {
+  min-height:54px;
+  display:grid;
+  place-items:center;
+  margin:14px 0;
+  text-align:center;
+}
 .prompt strong { font-size:18px; }
 .prompt small { display:block; margin-top:4px; color:var(--muted); }
-.tiles { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; width:min(100%,390px); margin:auto; }
-.tile {
-  aspect-ratio:1; border:1px solid var(--line); border-radius:15px;
-  background:var(--surface); font-size:clamp(28px,8vw,42px); font-weight:750;
+
+.tiles {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:9px;
+  width:min(100%,390px);
+  margin:auto;
 }
-.tile.target,.tile.lit { color:var(--accent); background:var(--soft); border-color:#bdcdbf; }
+.tile {
+  aspect-ratio:1;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:var(--surface);
+  font-size:clamp(28px,8vw,42px);
+  font-weight:750;
+  touch-action:manipulation;
+}
+.tile.target,.tile.lit {
+  color:var(--accent);
+  background:var(--soft);
+  border-color:#bdcdbf;
+}
 .tile.wrong { color:var(--bad); background:#f8e9e7; border-color:#dfaaa3; }
 .tile:active,.choice:active,.pad:active,.direction:active { transform:scale(.95); }
-.controls { display:flex; flex-wrap:wrap; justify-content:center; gap:9px; margin-top:16px; }
+
+.controls {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:9px;
+  margin-top:16px;
+}
 .choice,.direction,.pad {
-  min-height:48px; padding:11px 16px; border:1px solid var(--line);
-  border-radius:13px; background:var(--surface); font-weight:700;
+  min-height:48px;
+  padding:11px 16px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:var(--surface);
+  font-weight:700;
 }
 .choice { flex:1; min-width:95px; }
-.pad-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; width:min(100%,360px); margin:auto; }
+.pad-grid {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  width:min(100%,360px);
+  margin:auto;
+}
 .pad { min-height:100px; border-radius:22px; opacity:.75; }
 .pad.active { opacity:1; outline:3px solid var(--ink); }
 .canvas-wrap { width:min(100%,420px); margin:auto; }
-canvas { display:block; width:100%; border:1px solid var(--line); border-radius:15px; background:#fbfbfa; touch-action:none; }
-.type-input { width:100%; padding:14px; border:1px solid var(--line); border-radius:13px; background:var(--surface); font-size:19px; text-align:center; }
+canvas {
+  display:block;
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:#fbfbfa;
+  touch-action:none;
+}
+.type-input {
+  width:100%;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:var(--surface);
+  font-size:19px;
+  text-align:center;
+}
 .note { min-height:21px; text-align:center; color:var(--muted); font-size:12px; }
-dialog { width:min(90vw,370px); padding:24px; border:1px solid var(--line); border-radius:21px; background:var(--surface); color:var(--ink); text-align:center; }
+
+dialog {
+  width:min(90vw,370px);
+  padding:24px;
+  border:1px solid var(--line);
+  border-radius:21px;
+  background:var(--surface);
+  color:var(--ink);
+  text-align:center;
+}
 dialog::backdrop { background:#17201866; }
 dialog h2 { margin:0 0 8px; }
 dialog p { color:var(--muted); font-size:13px; line-height:1.5; }
-.primary { width:100%; min-height:47px; border:0; border-radius:13px; background:var(--accent); color:white; font-weight:750; }
-.empty { grid-column:1/-1; padding:24px; color:var(--muted); text-align:center; }
+.primary {
+  width:100%;
+  min-height:47px;
+  border:0;
+  border-radius:13px;
+  background:var(--accent);
+  color:white;
+  font-weight:750;
+}
+
+/* Splash screen */
+#splash {
+  position:fixed;
+  inset:0;
+  z-index:10;
+  display:grid;
+  place-items:center;
+  padding:24px;
+  background:
+    radial-gradient(ellipse at 50% 35%, #e4ede5 0%, transparent 52%),
+    var(--bg);
+  transition:opacity .35s ease, visibility .35s ease;
+}
+#splash.hidden { opacity:0; visibility:hidden; pointer-events:none; }
+.splash-content { width:min(100%,390px); text-align:center; }
+.splash-logo {
+  width:92px;
+  height:92px;
+  display:grid;
+  place-items:center;
+  margin:0 auto 24px;
+  border-radius:30px;
+  color:var(--accent);
+  background:var(--soft);
+  box-shadow:0 12px 36px #506b5915;
+}
+.splash-logo svg { width:51px; height:51px; }
+.splash-title { margin:0; font-size:clamp(38px,11vw,56px); letter-spacing:-2.5px; }
+.splash-subtitle { margin:10px 0 30px; color:var(--muted); font-size:14px; }
+.studio { margin-top:20px; color:var(--muted); font-size:11px; letter-spacing:2px; text-transform:uppercase; }
+#startButton { min-height:54px; font-size:16px; }
+.splash-version { margin-top:18px; color:#a4a69f; font-size:11px; }
+
 @media(max-width:380px) {
   .app { width:min(100% - 22px,760px); }
   .grid { gap:8px; }
   .game-card { padding:11px; gap:9px; }
   .best { display:none; }
 }
-@media(prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none!important; } }
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after { transition:none!important; }
+}
 </style>
 </head>
+
 <body>
+<div id="splash">
+  <div class="splash-content">
+    <div class="splash-logo" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="3" width="7" height="7" rx="2"/>
+        <rect x="14" y="3" width="7" height="7" rx="2"/>
+        <rect x="3" y="14" width="7" height="7" rx="2"/>
+        <path d="M17.5 14v7M14 17.5h7"/>
+      </svg>
+    </div>
+    <h1 class="splash-title">Tile Master</h1>
+    <p class="splash-subtitle">A little arcade for quick minds.</p>
+    <button id="startButton" class="primary">Start playing</button>
+    <div class="studio">Made by MRB Studio</div>
+    <div class="splash-version">10 games · Free to play</div>
+  </div>
+</div>
+
 <main class="app">
   <header>
     <div class="brand">
@@ -117,10 +339,13 @@ dialog p { color:var(--muted); font-size:13px; line-height:1.5; }
           <path d="M17.5 14v7M14 17.5h7"/>
         </svg>
       </div>
-      <div><h1>Tile Master</h1><p class="subtitle">A little arcade for quick minds</p></div>
+      <div>
+        <h1>Tile Master</h1>
+        <p class="subtitle">Made by MRB Studio</p>
+      </div>
     </div>
     <div class="top-actions">
-      <button id="soundToggle" class="icon-btn" aria-label="Toggle sound">♪ Sound</button>
+      <button id="soundToggle" class="icon-btn" aria-label="Toggle sound">♪ Sound on</button>
     </div>
   </header>
   <section id="app"></section>
@@ -153,16 +378,16 @@ const svg = {
 };
 
 const games = [
-  { id:"gridtap", title:"Grid Tap Blitz", desc:"Find the target before the rival.", icon:"bolt" },
-  { id:"pong", title:"Neon Pong Solo", desc:"Keep the ball in play against AI.", icon:"pong" },
-  { id:"colorswitch", title:"Color Switch", desc:"Tap the called-out color.", icon:"color" },
-  { id:"memory", title:"Simon Says", desc:"Watch and repeat the sequence.", icon:"brain" },
-  { id:"mathblitz", title:"Math Blitz", desc:"Solve quick true-or-false equations.", icon:"math" },
-  { id:"swipedodge", title:"Direction Dash", desc:"Follow the arrow before time runs out.", icon:"arrows" },
-  { id:"coindrop", title:"Coin Catch", desc:"Move your basket; avoid the spikes.", icon:"coin" },
-  { id:"wordrush", title:"Word Rush", desc:"Type the word before the rival.", icon:"word" },
-  { id:"rhythm", title:"Beat Tap", desc:"Tap in time with the moving pulse.", icon:"rhythm" },
-  { id:"snake", title:"Classic Snake", desc:"Eat, grow, and avoid your tail.", icon:"snake" }
+  {id:"gridtap",title:"Grid Tap Blitz",desc:"Find the target before the rival.",icon:"bolt"},
+  {id:"pong",title:"Neon Pong Solo",desc:"Keep the ball in play against AI.",icon:"pong"},
+  {id:"colorswitch",title:"Color Switch",desc:"Tap the called-out color.",icon:"color"},
+  {id:"memory",title:"Simon Says",desc:"Watch and repeat the sequence.",icon:"brain"},
+  {id:"mathblitz",title:"Math Blitz",desc:"Solve quick true-or-false equations.",icon:"math"},
+  {id:"swipedodge",title:"Direction Dash",desc:"Follow the arrow before time runs out.",icon:"arrows"},
+  {id:"coindrop",title:"Coin Catch",desc:"Move your basket; avoid hazards.",icon:"coin"},
+  {id:"wordrush",title:"Word Rush",desc:"Type the word before the rival.",icon:"word"},
+  {id:"rhythm",title:"Beat Tap",desc:"Tap in time with the moving pulse.",icon:"rhythm"},
+  {id:"snake",title:"Classic Snake",desc:"Eat, grow, and avoid your tail.",icon:"snake"}
 ];
 
 let soundEnabled = true;
@@ -197,15 +422,6 @@ function later(fn, ms) {
   trackCleanup(() => clearTimeout(id));
   return id;
 }
-function interval(fn, ms) {
-  const id = setInterval(fn, ms);
-  trackCleanup(() => clearInterval(id));
-  return id;
-}
-function addListener(target, event, fn, options) {
-  target.addEventListener(event, fn, options);
-  trackCleanup(() => target.removeEventListener(event, fn, options));
-}
 function clearGame() {
   cancelAnimationFrame(raf);
   raf = 0;
@@ -220,159 +436,207 @@ function beep(kind="tap") {
     if (!AC) return;
     if (!audio) audio = new AC();
     if (audio.state === "suspended") audio.resume().catch(() => {});
-    const osc = audio.createOscillator(), gain = audio.createGain();
+    const osc = audio.createOscillator();
+    const gain = audio.createGain();
     const now = audio.currentTime;
     const settings = {
-      tap:[440,660,.07,"sine"], score:[523,784,.18,"triangle"],
-      error:[180,90,.2,"sawtooth"], win:[440,660,.3,"sine"]
+      tap:[440,660,.07,"sine"],
+      score:[523,784,.18,"triangle"],
+      error:[180,90,.2,"sawtooth"],
+      win:[440,660,.3,"sine"]
     }[kind] || [440,660,.07,"sine"];
     osc.type = settings[3];
-    osc.frequency.setValueAtTime(settings[0], now);
-    osc.frequency.exponentialRampToValueAtTime(settings[1], now + settings[2]);
-    gain.gain.setValueAtTime(.11, now);
-    gain.gain.exponentialRampToValueAtTime(.001, now + settings[2]);
-    osc.connect(gain); gain.connect(audio.destination);
-    osc.start(now); osc.stop(now + settings[2]);
-    osc.onended = () => { osc.disconnect(); gain.disconnect(); };
+    osc.frequency.setValueAtTime(settings[0],now);
+    osc.frequency.exponentialRampToValueAtTime(settings[1],now+settings[2]);
+    gain.gain.setValueAtTime(.11,now);
+    gain.gain.exponentialRampToValueAtTime(.001,now+settings[2]);
+    osc.connect(gain);
+    gain.connect(audio.destination);
+    osc.start(now);
+    osc.stop(now+settings[2]);
+    osc.onended=()=>{osc.disconnect();gain.disconnect();};
   } catch {}
 }
 function vibrate(pattern=25) {
-  try { if (navigator.vibrate) navigator.vibrate(pattern); } catch {}
+  try { if(navigator.vibrate) navigator.vibrate(pattern); } catch {}
 }
-function header(title, score, rival="") {
+function header(title,score,rival="") {
   return `<div class="game-head">
-    <div><h2>${title}</h2><small style="color:var(--muted)">Score <b id="gameScore">${score}</b>${rival ? ` · Rival <b id="rivalScore">${rival}</b>` : ""}</small></div>
+    <div><h2>${title}</h2>
+    <small>Score <b id="gameScore">${score}</b>${rival?` · Rival <b id="rivalScore">${rival}</b>`:""}</small></div>
     <button class="back" data-action="menu">← Games</button>
   </div>`;
 }
 function renderMenu() {
   clearGame();
-  $("endDialog").close?.();
-  lastGameId = null;
-  $("soundToggle").innerHTML = `${svg.rhythm} Sound ${soundEnabled ? "on" : "off"}`;
-  app.innerHTML = `
-    <div class="intro"><h2>Choose a game</h2><p>Ten quick challenges. Your records stay saved on this device.</p></div>
-    <div class="grid">${games.map(g => `
+  $("endDialog").close();
+  lastGameId=null;
+  app.innerHTML=`
+    <div class="intro"><h2>Choose a game</h2>
+    <p>Ten quick challenges. Your personal bests are saved on this device.</p></div>
+    <div class="grid">${games.map(g=>`
       <button class="game-card" data-game="${g.id}">
         <span class="game-icon">${svg[g.icon]}</span>
         <span class="card-copy"><strong>${g.title}</strong><small>${g.desc}</small></span>
         <span class="best">BEST<strong>${getBest(g.id)}</strong></span>
       </button>`).join("")}
     </div>`;
+  updateSoundButton();
 }
-function endGame(message, score, id=currentGame?.id) {
-  if (!currentGame || currentGame.over) return;
-  currentGame.over = true;
-  const thisRun = runNumber;
-  const isNew = setBest(id, score);
-  beep("error"); vibrate([70,35,90]);
-  $("endTitle").textContent = isNew ? "New personal best" : "Run complete";
-  $("endText").textContent = `${message} Final score: ${score}. Best: ${getBest(id)}.`;
+function updateSoundButton() {
+  $("soundToggle").innerHTML=`${svg.rhythm} Sound ${soundEnabled?"on":"off"}`;
+}
+function endGame(message,score,id=currentGame?.id) {
+  if(!currentGame||currentGame.over)return;
+  currentGame.over=true;
+  const thisRun=runNumber;
+  const isNew=setBest(id,score);
+  beep("error");
+  vibrate([70,35,90]);
+  $("endTitle").textContent=isNew?"New personal best":"Game over";
+  $("endText").textContent=`${message} Final score: ${score}. Best: ${getBest(id)}.`;
   $("endDialog").showModal();
-  $("again").onclick = () => {
+  $("again").onclick=()=>{
     $("endDialog").close();
-    if (thisRun === runNumber && lastGameId) launch(lastGameId);
+    if(thisRun===runNumber&&lastGameId)launch(lastGameId);
   };
 }
-function startGame(id, title, score=0) {
+function startGame(id) {
   clearGame();
   runNumber++;
-  lastGameId = id;
-  currentGame = { id, score, over:false };
-  $("endDialog").close?.();
+  lastGameId=id;
+  currentGame={id,score:0,over:false};
+  $("endDialog").close();
   return currentGame;
 }
 function launch(id) {
-  const g = games.find(x => x.id === id);
-  if (!g) return;
-  const c = startGame(id, g.title);
+  const game=games.find(g=>g.id===id);
+  if(!game)return;
+  const c=startGame(id);
   switch(id) {
-    case "gridtap": gridTap(c); break;
-    case "pong": pong(c); break;
-    case "colorswitch": colorSwitch(c); break;
-    case "memory": memory(c); break;
-    case "mathblitz": mathBlitz(c); break;
-    case "swipedodge": directionDash(c); break;
-    case "coindrop": coinCatch(c); break;
-    case "wordrush": wordRush(c); break;
-    case "rhythm": beatTap(c); break;
-    case "snake": snake(c); break;
+    case "gridtap":gridTap(c);break;
+    case "pong":pong(c);break;
+    case "colorswitch":colorSwitch(c);break;
+    case "memory":memory(c);break;
+    case "mathblitz":mathBlitz(c);break;
+    case "swipedodge":directionDash(c);break;
+    case "coindrop":coinCatch(c);break;
+    case "wordrush":wordRush(c);break;
+    case "rhythm":beatTap(c);break;
+    case "snake":snake(c);break;
   }
 }
-document.addEventListener("click", e => {
-  const game = e.target.closest("[data-game]");
-  if (game) launch(game.dataset.game);
-  if (e.target.closest('[data-action="menu"]')) renderMenu();
+document.addEventListener("click",e=>{
+  const game=e.target.closest("[data-game]");
+  if(game)launch(game.dataset.game);
+  if(e.target.closest('[data-action="menu"]'))renderMenu();
 });
-$("soundToggle").addEventListener("click", () => {
-  soundEnabled = !soundEnabled;
-  if (soundEnabled) beep("tap");
+$("soundToggle").addEventListener("click",()=>{
+  soundEnabled=!soundEnabled;
+  updateSoundButton();
+  if(soundEnabled)beep("tap");
+});
+$("startButton").addEventListener("click",()=>{
+  $("splash").classList.add("hidden");
   renderMenu();
 });
 
-// 1. GRID TAP BLITZ — AI interval tightens as score rises.
+// 1. Grid Tap Blitz: AI gets faster as the player scores.
 function gridTap(c) {
-  const count=9, start=performance.now();
-  let target=-1, time=5, ai=0, aiProgress=0, prev=0;
+  let target=-1,time=5,ai=0,aiProgress=0,prev=0;
   const intervalFor=()=>Math.max(.23,.56-c.score*.0035);
   app.innerHTML=`<div class="game-screen">${header("Grid Tap Blitz",0,0)}
     <div class="progress-label"><span>Time · +0.35s per hit</span><b id="timeText">5.00</b></div>
     <div class="progress"><div id="timeBar" class="fill"></div></div>
-    <div class="progress-label"><span>AI progress · ${intervalFor().toFixed(2)}s / tile</span></div>
+    <div class="progress-label"><span>AI progress · <b id="aiSpeed"></b></span></div>
     <div class="progress"><div id="aiBar" class="fill"></div></div>
     <div class="prompt"><div><strong>Tap the ◆ target</strong><small>Wrong tile ends the run</small></div></div>
-    <div class="tiles" id="tapTiles"></div><p id="note" class="note"></p></div>`;
+    <div class="tiles" id="tapTiles"></div><p class="note" id="note"></p></div>`;
   const board=$("tapTiles");
-  for(let i=0;i<count;i++){
-    const b=document.createElement("button"); b.className="tile"; b.textContent=""; b.dataset.i=i;
+  for(let i=0;i<9;i++){
+    const b=document.createElement("button");
+    b.className="tile";
+    b.dataset.i=i;
     board.appendChild(b);
   }
-  function round() {
-    const bs=[...board.children];
-    bs.forEach((b,i)=>{b.className="tile";b.textContent="";});
-    target=Math.floor(Math.random()*count);
-    bs[target].classList.add("target"); bs[target].textContent="◆";
+  function round(){
+    const buttons=[...board.children];
+    buttons.forEach(b=>{b.className="tile";b.textContent="";});
+    target=Math.floor(Math.random()*buttons.length);
+    buttons[target].classList.add("target");
+    buttons[target].textContent="◆";
   }
   board.addEventListener("click",e=>{
-    const b=e.target.closest(".tile"); if(!b||c.over)return;
-    if(Number(b.dataset.i)!==target){b.classList.add("wrong");endGame("Wrong tile.",c.score);return;}
-    c.score++; $("gameScore").textContent=c.score; time=Math.min(8,time+.35);
-    beep("score"); vibrate(20); round();
+    const b=e.target.closest(".tile");
+    if(!b||c.over)return;
+    if(Number(b.dataset.i)!==target){
+      b.classList.add("wrong");
+      endGame(`Wrong tile. The AI scored ${ai}.`,c.score);
+      return;
+    }
+    c.score++;
+    $("gameScore").textContent=c.score;
+    time=Math.min(8,time+.35);
+    beep("score");
+    vibrate(20);
+    round();
   });
   round();
   function frame(now){
     if(c.over)return;
-    const dt=Math.min(.05,(now-prev)/1000||0); prev=now;
-    time-=dt; aiProgress+=dt/intervalFor();
-    if(aiProgress>=1){const n=Math.floor(aiProgress);ai+=n;aiProgress-=n;$("rivalScore").textContent=ai;}
+    const dt=Math.min(.05,(now-prev)/1000||0);
+    prev=now;
+    time-=dt;
+    aiProgress+=dt/intervalFor();
+    if(aiProgress>=1){
+      const clears=Math.floor(aiProgress);
+      ai+=clears;
+      aiProgress-=clears;
+      $("rivalScore").textContent=ai;
+    }
+    $("aiSpeed").textContent=`${intervalFor().toFixed(2)}s / tile`;
     $("timeText").textContent=Math.max(0,time).toFixed(2);
     $("timeBar").style.transform=`scaleX(${Math.max(0,time/8)})`;
-    $("aiBar").style.transform=`scaleX(${aiProgress)})`;
+    // Fixed template literal: this was the syntax error preventing the app loading.
+    $("aiBar").style.transform=`scaleX(${Math.max(0,Math.min(1,aiProgress))})`;
     if(time<=0){endGame(`AI scored ${ai}.`,c.score);return;}
     raf=requestAnimationFrame(frame);
   }
   raf=requestAnimationFrame(frame);
 }
 
-// 2. PONG — simple canvas rally against reactive AI.
+// 2. Pong against a reactive AI paddle.
 function pong(c) {
   app.innerHTML=`<div class="game-screen">${header("Neon Pong Solo",0,0)}
-    <p class="note">Drag or move your finger on the court to control your paddle.</p>
+    <p class="note">Move your finger over the court to control your paddle.</p>
     <div class="canvas-wrap"><canvas id="pongCanvas" width="360" height="500"></canvas></div>
     <div class="controls"><button class="direction" data-move="-1">◀</button><button class="direction" data-move="1">▶</button></div>
     <p class="note">First to 5 points wins.</p></div>`;
   const cv=$("pongCanvas"),ctx=cv.getContext("2d");
-  let py=220, ay=220, x=180,y=250,vx=3,vy=2.3, playerScore=0, aiScore=0, held=0;
+  let py=220,ay=220,x=180,y=250,vx=3,vy=2.3,playerScore=0,aiScore=0,held=0;
+  function reset(){x=180;y=250;vx=(Math.random()<.5?1:-1)*3;vy=(Math.random()-.5)*4;}
+  function move(e){
+    const r=cv.getBoundingClientRect();
+    py=clamp((e.clientY-r.top)*cv.height/r.height-34,0,cv.height-68);
+  }
+  cv.addEventListener("pointerdown",e=>{cv.setPointerCapture(e.pointerId);move(e);});
+  cv.addEventListener("pointermove",e=>{if(e.buttons||e.pointerType==="touch")move(e);});
+  document.querySelectorAll("[data-move]").forEach(b=>{
+    b.addEventListener("pointerdown",()=>held=Number(b.dataset.move));
+    b.addEventListener("pointerup",()=>held=0);
+    b.addEventListener("pointercancel",()=>held=0);
+  });
   function draw(){
     if(c.over)return;
     const w=cv.width,h=cv.height;
-    ctx.clearRect(0,0,w,h);ctx.fillStyle="#f7f7f5";ctx.fillRect(0,0,w,h);
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle="#fbfbfa";ctx.fillRect(0,0,w,h);
     ctx.setLineDash([6,8]);ctx.strokeStyle="#d9ddd7";ctx.beginPath();ctx.moveTo(w/2,0);ctx.lineTo(w/2,h);ctx.stroke();ctx.setLineDash([]);
     ctx.fillStyle="#506b59";ctx.fillRect(12,py,9,68);ctx.fillRect(w-21,ay,9,68);
     ctx.beginPath();ctx.arc(x,y,8,0,Math.PI*2);ctx.fill();
     py=clamp(py+held*5,0,h-68);
-    const react=clamp((c.score+1)*.09,.25,.88);
-    ay+=(y-34-ay)*react;
+    const react=clamp(.35+c.score*.04,.35,.88);
+    ay=clamp(ay+(y-34-ay)*react,0,h-68);
     x+=vx;y+=vy;
     if(y<8||y>h-8)vy*=-1;
     if(x<28&&y>py-5&&y<py+73){vx=Math.abs(vx)*1.04;vy+=(y-(py+34))*.055;}
@@ -382,72 +646,87 @@ function pong(c) {
     if(playerScore>=5||aiScore>=5){endGame(playerScore>aiScore?"You won the rally.":"The AI won the rally.",playerScore);return;}
     raf=requestAnimationFrame(draw);
   }
-  function reset(){x=180;y=250;vx=(Math.random()<.5?1:-1)*3;vy=(Math.random()-.5)*4;}
-  cv.addEventListener("pointermove",e=>{if(e.buttons||e.pointerType==="touch"){const r=cv.getBoundingClientRect();py=(e.clientY-r.top)*cv.height/r.height-34;}});
-  document.querySelectorAll("[data-move]").forEach(b=>{
-    b.addEventListener("pointerdown",()=>held=Number(b.dataset.move));
-    b.addEventListener("pointerup",()=>held=0);
-    b.addEventListener("pointercancel",()=>held=0);
-  });
   raf=requestAnimationFrame(draw);
 }
 
-// 3. COLOR SWITCH — identify requested color.
+// 3. Color Switch.
 function colorSwitch(c) {
   const colors=[["Coral","#cf6c61"],["Sage","#64826d"],["Blue","#6684a8"],["Gold","#c39c50"]];
-  let target;
-  app.innerHTML=`<div class="game-screen">${header("Color Switch",0,"")}
+  let target=0;
+  app.innerHTML=`<div class="game-screen">${header("Color Switch",0)}
     <div class="prompt"><div><strong id="colorPrompt"></strong><small>Tap the matching color</small></div></div>
-    <div class="tiles" id="colorTiles"></div><p class="note" id="note">Build a streak. Each round gets faster.</p></div>`;
+    <div class="tiles" id="colorTiles"></div></div>`;
   const board=$("colorTiles");
   function round(){
     board.replaceChildren();
     target=Math.floor(Math.random()*colors.length);
     $("colorPrompt").textContent=`Find ${colors[target][0]}`;
-    let opts=Array.from({length:9},()=>Math.floor(Math.random()*colors.length));
-    opts[Math.floor(Math.random()*9)]=target;
-    opts.forEach((n,i)=>{
-      const b=document.createElement("button");b.className="tile";b.dataset.color=n;
-      b.style.background=colors[n][1];b.setAttribute("aria-label",colors[n][0]);
+    const options=Array.from({length:9},()=>Math.floor(Math.random()*colors.length));
+    options[Math.floor(Math.random()*9)]=target;
+    options.forEach((n)=>{
+      const b=document.createElement("button");
+      b.className="tile";
+      b.dataset.color=n;
+      b.style.background=colors[n][1];
+      b.setAttribute("aria-label",colors[n][0]);
       board.appendChild(b);
     });
   }
   board.addEventListener("click",e=>{
-    const b=e.target.closest("button");if(!b||c.over)return;
+    const b=e.target.closest("button");
+    if(!b||c.over)return;
     if(Number(b.dataset.color)!==target){b.classList.add("wrong");endGame("Incorrect color.",c.score);return;}
-    c.score++;$("gameScore").textContent=c.score;beep("score");vibrate(18);round();
+    c.score++;
+    $("gameScore").textContent=c.score;
+    beep("score");vibrate(18);round();
   });
   round();
 }
 
-// 4. SIMON SAYS — increasingly long memory sequence.
+// 4. Simon Says.
 function memory(c) {
   let seq=[],input=0,locked=true,roundNo=1;
-  app.innerHTML=`<div class="game-screen">${header("Simon Says",0,"")}
+  app.innerHTML=`<div class="game-screen">${header("Simon Says",0)}
     <div class="prompt"><div><strong id="memPrompt">Watch the sequence</strong><small>Repeat the lights in order</small></div></div>
-    <div class="pad-grid" id="pads">${[0,1,2,3].map(i=>`<button class="pad" data-pad="${i}" style="background:${["#dcebe0","#e9e3f1","#f2e4df","#e5eaf1"][i]}">${["●","◆","■","▲"][i]}</button>`).join("")}</div>
-    <p class="note" id="note"></p></div>`;
+    <div class="pad-grid">${[0,1,2,3].map(i=>`<button class="pad" data-pad="${i}" style="background:${["#dcebe0","#e9e3f1","#f2e4df","#e5eaf1"][i]}">${["●","◆","■","▲"][i]}</button>`).join("")}</div>
+    <p id="note" class="note"></p></div>`;
   const pads=[...document.querySelectorAll(".pad")];
-  function flash(i){pads[i].classList.add("active");beep("tap");later(()=>pads[i]?.classList.remove("active"),260);}
+  function flash(i){
+    pads[i]?.classList.add("active");
+    beep("tap");
+    later(()=>pads[i]?.classList.remove("active"),250);
+  }
   function show(){
+    if(c.over)return;
     locked=true;input=0;seq.push(Math.floor(Math.random()*4));
     $("memPrompt").textContent=`Round ${roundNo} · Watch`;
-    seq.forEach((n,i)=>later(()=>flash(n),450+i*Math.max(280,650-roundNo*15)));
-    later(()=>{locked=false;$("memPrompt").textContent=`Round ${roundNo} · Your turn`;},450+seq.length*Math.max(280,650-roundNo*15));
+    const gap=Math.max(300,650-roundNo*12);
+    seq.forEach((n,i)=>later(()=>flash(n),400+i*gap));
+    later(()=>{
+      if(c.over)return;
+      locked=false;
+      $("memPrompt").textContent=`Round ${roundNo} · Your turn`;
+    },400+seq.length*gap);
   }
   pads.forEach(p=>p.addEventListener("click",()=>{
     if(locked||c.over)return;
     const n=Number(p.dataset.pad);flash(n);
     if(n!==seq[input]){endGame("Sequence missed.",c.score);return;}
     input++;
-    if(input===seq.length){c.score+=roundNo;$("gameScore").textContent=c.score;roundNo++;beep("score");later(show,500);}
+    if(input===seq.length){
+      c.score+=roundNo;
+      $("gameScore").textContent=c.score;
+      roundNo++;
+      beep("score");
+      later(show,450);
+    }
   }));
   show();
 }
 
-// 5. MATH BLITZ — answer before timer; local AI scores over time.
+// 5. Math Blitz.
 function mathBlitz(c) {
-  let time=20,prev=performance.now(),answer=false,ai=0,aiProg=0;
+  let time=20,prev=0,answer=false,ai=0,aiProg=0;
   app.innerHTML=`<div class="game-screen">${header("Math Blitz",0,0)}
     <div class="progress-label"><span>Time</span><b id="timeText">20</b></div><div class="progress"><div id="timeBar" class="fill"></div></div>
     <div class="prompt"><div><strong id="equation"></strong><small>Is this equation correct?</small></div></div>
@@ -478,45 +757,59 @@ function mathBlitz(c) {
   raf=requestAnimationFrame(loop);
 }
 
-// 6. DIRECTION DASH — follow a displayed arrow; changing direction gets faster.
+// 6. Direction Dash.
 function directionDash(c) {
-  let current=0,time=15,prev=performance.now();
-  const dirs=[["↑",0,-1],["→",1,0],["↓",0,1],["←",-1,0]];
-  app.innerHTML=`<div class="game-screen">${header("Direction Dash",0,0)}
+  let current=0,time=15,prev=0;
+  const dirs=["↑","→","↓","←"];
+  app.innerHTML=`<div class="game-screen">${header("Direction Dash",0)}
     <div class="progress-label"><span>Time</span><b id="timeText">15</b></div><div class="progress"><div id="timeBar" class="fill"></div></div>
     <div class="prompt"><div><strong>Tap this direction</strong><small id="dirPrompt"></small></div></div>
-    <div class="controls" id="dirButtons"></div><p class="note">The prompt gets quicker as your score rises.</p></div>`;
-  const names=["↑","→","↓","←"];
-  $("dirButtons").innerHTML=names.map((x,i)=>`<button class="direction" data-dir="${i}" style="min-width:58px;font-size:24px">${x}</button>`).join("");
-  function next(){current=Math.floor(Math.random()*4);$("dirPrompt").textContent=dirs[current][0];}
+    <div class="controls" id="dirButtons"></div>
+    <p class="note">One wrong direction ends the run.</p></div>`;
+  $("dirButtons").innerHTML=dirs.map((d,i)=>`<button class="direction" data-dir="${i}" style="min-width:58px;font-size:24px">${d}</button>`).join("");
+  function next(){current=Math.floor(Math.random()*4);$("dirPrompt").textContent=dirs[current];}
   $("dirButtons").addEventListener("click",e=>{
-    const b=e.target.closest("[data-dir]");if(!b||c.over)return;
+    const b=e.target.closest("[data-dir]");
+    if(!b||c.over)return;
     if(Number(b.dataset.dir)!==current){endGame("Wrong direction.",c.score);return;}
     c.score++;$("gameScore").textContent=c.score;beep("score");next();
   });
   next();
   function loop(now){
-    if(c.over)return;const dt=Math.min(.05,(now-prev)/1000||0);prev=now;time-=dt;
-    $("timeText").textContent=Math.max(0,time).toFixed(1);$("timeBar").style.transform=`scaleX(${Math.max(0,time/15)})`;
-    if(time<=0){endGame("Time is up.",c.score);return;}raf=requestAnimationFrame(loop);
-  } raf=requestAnimationFrame(loop);
+    if(c.over)return;
+    const dt=Math.min(.05,(now-prev)/1000||0);prev=now;time-=dt;
+    $("timeText").textContent=Math.max(0,time).toFixed(1);
+    $("timeBar").style.transform=`scaleX(${Math.max(0,time/15)})`;
+    if(time<=0){endGame("Time is up.",c.score);return;}
+    raf=requestAnimationFrame(loop);
+  }
+  raf=requestAnimationFrame(loop);
 }
 
-// 7. COIN CATCH — drag basket left/right, catch green coins.
+// 7. Coin Catch.
 function coinCatch(c) {
-  const W=360,H=500;let basket=180,objects=[],last=performance.now(),elapsed=0,spawn=0;
-  app.innerHTML=`<div class="game-screen">${header("Coin Catch",0,"")}
+  const W=360,H=500;
+  let basket=180,objects=[],last=0,elapsed=0,spawn=0;
+  app.innerHTML=`<div class="game-screen">${header("Coin Catch",0)}
     <p class="note">Drag on the playfield to move. Catch coins; avoid red hazards.</p>
     <div class="canvas-wrap"><canvas id="catchCanvas" width="${W}" height="${H}"></canvas></div></div>`;
   const cv=$("catchCanvas"),ctx=cv.getContext("2d");
-  function move(e){const r=cv.getBoundingClientRect();basket=clamp((e.clientX-r.left)*W/r.width,22,W-22);}
+  function move(e){
+    const r=cv.getBoundingClientRect();
+    basket=clamp((e.clientX-r.left)*W/r.width,22,W-22);
+  }
   cv.addEventListener("pointerdown",e=>{cv.setPointerCapture(e.pointerId);move(e);});
   cv.addEventListener("pointermove",e=>{if(e.buttons||e.pointerType==="touch")move(e);});
   function loop(now){
-    if(c.over)return;const dt=Math.min(.05,(now-last)/1000||0);last=now;elapsed+=dt;spawn+=dt;
+    if(c.over)return;
+    const dt=Math.min(.05,(now-last)/1000||0);last=now;elapsed+=dt;spawn+=dt;
     if(spawn>.6){spawn=0;objects.push({x:rand(14,W-14),y:-10,hazard:Math.random()<.22,speed:150+Math.min(170,c.score*4)});}
     ctx.clearRect(0,0,W,H);
-    objects.forEach(o=>{o.y+=o.speed*dt;ctx.fillStyle=o.hazard?"#c45353":"#c39c50";ctx.beginPath();ctx.arc(o.x,o.y,10,0,Math.PI*2);ctx.fill();});
+    objects.forEach(o=>{
+      o.y+=o.speed*dt;
+      ctx.fillStyle=o.hazard?"#c45353":"#c39c50";
+      ctx.beginPath();ctx.arc(o.x,o.y,10,0,Math.PI*2);ctx.fill();
+    });
     ctx.fillStyle="#506b59";ctx.fillRect(basket-28,H-37,56,12);
     for(let i=objects.length-1;i>=0;i--){
       const o=objects[i];
@@ -527,19 +820,24 @@ function coinCatch(c) {
     }
     if(elapsed>=30){endGame("Round complete.",c.score);return;}
     raf=requestAnimationFrame(loop);
-  } raf=requestAnimationFrame(loop);
+  }
+  raf=requestAnimationFrame(loop);
 }
 
-// 8. WORD RUSH — type each prompt; rival speed improves as your score rises.
+// 8. Word Rush.
 function wordRush(c) {
   const words=["MINT","CLOUD","BRISK","PLANT","STONE","RIVER","LIGHT","QUICK","EMBER","NORTH"];
-  let time=20,prev=performance.now(),ai=0,aiProg=0;
+  let time=20,prev=0,ai=0,aiProg=0;
   app.innerHTML=`<div class="game-screen">${header("Word Rush",0,0)}
     <div class="progress-label"><span>Time</span><b id="timeText">20</b></div><div class="progress"><div id="timeBar" class="fill"></div></div>
     <div class="prompt"><div><strong id="word"></strong><small>Type the word exactly</small></div></div>
     <input id="wordInput" class="type-input" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Type the displayed word">
     <p class="note">Rival points: <b id="rivalScore">0</b></p></div>`;
-  function next(){ $("word").textContent=words[Math.floor(Math.random()*words.length)];const input=$("wordInput");input.value="";input.focus();}
+  function next(){
+    $("word").textContent=words[rand(0,words.length-1)];
+    $("wordInput").value="";
+    $("wordInput").focus();
+  }
   $("wordInput").addEventListener("input",()=>{
     const input=$("wordInput");
     if(input.value.trim().toUpperCase()===$("word").textContent){
@@ -548,27 +846,29 @@ function wordRush(c) {
   });
   next();
   function loop(now){
-    if(c.over)return;const dt=Math.min(.05,(now-prev)/1000||0);prev=now;time-=dt;
+    if(c.over)return;
+    const dt=Math.min(.05,(now-prev)/1000||0);prev=now;time-=dt;
     aiProg+=dt/Math.max(.55,1.5-c.score*.025);
     if(aiProg>=1){ai++;aiProg-=1;$("rivalScore").textContent=ai;}
-    $("timeText").textContent=Math.max(0,time).toFixed(1);$("timeBar").style.transform=`scaleX(${Math.max(0,time/20)})`;
-    if(time<=0){endGame(`Rival typed ${ai} words.`,c.score);return;}raf=requestAnimationFrame(loop);
-  } raf=requestAnimationFrame(loop);
+    $("timeText").textContent=Math.max(0,time).toFixed(1);
+    $("timeBar").style.transform=`scaleX(${Math.max(0,time/20)})`;
+    if(time<=0){endGame(`Rival typed ${ai} words.`,c.score);return;}
+    raf=requestAnimationFrame(loop);
+  }
+  raf=requestAnimationFrame(loop);
 }
 
-// 9. BEAT TAP — timing window tightens as the score rises.
+// 9. Beat Tap.
 function beatTap(c) {
-  let phase=0,dir=1,last=performance.now(),duration=1.3;
-  app.innerHTML=`<div class="game-screen">${header("Beat Tap",0,"")}
+  let phase=0,dir=1,last=0,misses=0;
+  app.innerHTML=`<div class="game-screen">${header("Beat Tap",0)}
     <div class="prompt"><div><strong>Tap when the pulse is centered</strong><small>Miss three beats and the run ends</small></div></div>
     <div class="canvas-wrap"><canvas id="beatCanvas" width="360" height="150"></canvas></div>
     <div class="controls"><button id="beatButton" class="choice">TAP BEAT</button></div>
     <p id="note" class="note">Misses: 0 / 3</p></div>`;
-  let misses=0;
   $("beatButton").addEventListener("click",()=>{
     if(c.over)return;
-    const distance=Math.abs(phase-.5);
-    if(distance<Math.max(.045,.16-c.score*.003)){
+    if(Math.abs(phase-.5)<Math.max(.045,.16-c.score*.003)){
       c.score++;$("gameScore").textContent=c.score;beep("score");vibrate(25);
     } else {
       misses++;$("note").textContent=`Misses: ${misses} / 3`;beep("error");
@@ -577,21 +877,28 @@ function beatTap(c) {
   });
   const cv=$("beatCanvas"),ctx=cv.getContext("2d");
   function loop(now){
-    if(c.over)return;const dt=Math.min(.05,(now-last)/1000||0);last=now;
-    duration=Math.max(.55,1.3-c.score*.025);
-    phase+=dir*dt/duration;if(phase>=1){phase=1;dir=-1;}if(phase<=0){phase=0;dir=1;}
-    ctx.clearRect(0,0,360,150);ctx.strokeStyle="#e3e5df";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(24,75);ctx.lineTo(336,75);ctx.stroke();
-    ctx.fillStyle="#e9f0ea";ctx.fillRect(180-18,42,36,66);
+    if(c.over)return;
+    const dt=Math.min(.05,(now-last)/1000||0);last=now;
+    const duration=Math.max(.55,1.3-c.score*.025);
+    phase+=dir*dt/duration;
+    if(phase>=1){phase=1;dir=-1;}
+    if(phase<=0){phase=0;dir=1;}
+    ctx.clearRect(0,0,360,150);
+    ctx.strokeStyle="#e3e5df";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(24,75);ctx.lineTo(336,75);ctx.stroke();
+    ctx.fillStyle="#e9f0ea";ctx.fillRect(162,42,36,66);
     ctx.fillStyle="#506b59";ctx.beginPath();ctx.arc(24+312*phase,75,13,0,Math.PI*2);ctx.fill();
     raf=requestAnimationFrame(loop);
-  } raf=requestAnimationFrame(loop);
+  }
+  raf=requestAnimationFrame(loop);
 }
 
-// 10. SNAKE — keyboard arrows and on-screen direction controls.
+// 10. Snake.
 function snake(c) {
-  const N=18;let body=[{x:8,y:10},{x:7,y:10},{x:6,y:10}],dir={x:1,y:0},queued={x:1,y:0};
-  let food={x:13,y:9},last=performance.now(),acc=0;
-  app.innerHTML=`<div class="game-screen">${header("Classic Snake",0,"")}
+  const N=18;
+  let body=[{x:8,y:10},{x:7,y:10},{x:6,y:10}];
+  let dir={x:1,y:0},queued={x:1,y:0};
+  let food={x:13,y:9},last=0,acc=0;
+  app.innerHTML=`<div class="game-screen">${header("Classic Snake",0)}
     <p class="note">Use the arrow buttons or keyboard arrow keys.</p>
     <div class="canvas-wrap"><canvas id="snakeCanvas" width="360" height="360"></canvas></div>
     <div class="controls">
@@ -601,38 +908,61 @@ function snake(c) {
       <button class="direction" data-dir="right">→</button>
     </div></div>`;
   const cv=$("snakeCanvas"),ctx=cv.getContext("2d");
-  function setDir(x,y){if(x===-dir.x&&y===-dir.y)return;queued={x,y};}
-  const key=e=>{const map={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]};if(map[e.key]){e.preventDefault();setDir(...map[e.key]);}};
-  addListener(window,"keydown",key);
-  document.querySelectorAll("[data-dir]").forEach(b=>b.addEventListener("click",()=>{
-    const d=b.dataset.dir;setDir(d==="left"?-1:d==="right"?1:0,d==="up"?-1:d==="down"?1:0);
-  }));
+  function setDir(x,y){
+    if(x===-dir.x&&y===-dir.y)return;
+    queued={x,y};
+  }
+  const key=e=>{
+    const map={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]};
+    if(map[e.key]){e.preventDefault();setDir(...map[e.key]);}
+  };
+  addTrackedListener(window,"keydown",key);
+  document.querySelectorAll("[data-dir]").forEach(b=>{
+    b.addEventListener("click",()=>{
+      const d=b.dataset.dir;
+      setDir(d==="left"?-1:d==="right"?1:0,d==="up"?-1:d==="down"?1:0);
+    });
+  });
   function spawnFood(){
-    do{food={x:rand(0,N-1),y:rand(0,N-1)}}while(body.some(p=>p.x===food.x&&p.y===food.y));
+    do { food={x:rand(0,N-1),y:rand(0,N-1)}; }
+    while(body.some(p=>p.x===food.x&&p.y===food.y));
   }
   function loop(now){
-    if(c.over)return;const dt=Math.min(.05,(now-last)/1000||0);last=now;acc+=dt;
+    if(c.over)return;
+    const dt=Math.min(.05,(now-last)/1000||0);last=now;acc+=dt;
     const step=Math.max(.075,.15-c.score*.002);
     while(acc>=step){
       acc-=step;dir=queued;
       const head={x:body[0].x+dir.x,y:body[0].y+dir.y};
-      if(head.x<0||head.x>=N||head.y<0||head.y>=N||body.some(p=>p.x===head.x&&p.y===head.y)){
+      if(head.x<0||head.x>=N||head.y<0||head.y>=N||
+        body.some(p=>p.x===head.x&&p.y===head.y)){
         endGame("Snake crashed.",c.score);return;
       }
       body.unshift(head);
-      if(head.x===food.x&&head.y===food.y){c.score++;$("gameScore").textContent=c.score;beep("score");spawnFood();}
-      else body.pop();
+      if(head.x===food.x&&head.y===food.y){
+        c.score++;$("gameScore").textContent=c.score;beep("score");spawnFood();
+      } else body.pop();
     }
-    const cell=360/N;ctx.clearRect(0,0,360,360);ctx.fillStyle="#c39c50";ctx.fillRect(food.x*cell+3,food.y*cell+3,cell-6,cell-6);
-    body.forEach((p,i)=>{ctx.fillStyle=i===0?"#506b59":"#9aaf9d";ctx.fillRect(p.x*cell+2,p.y*cell+2,cell-4,cell-4);});
+    const cell=360/N;
+    ctx.clearRect(0,0,360,360);
+    ctx.fillStyle="#c39c50";
+    ctx.fillRect(food.x*cell+3,food.y*cell+3,cell-6,cell-6);
+    body.forEach((p,i)=>{
+      ctx.fillStyle=i===0?"#506b59":"#9aaf9d";
+      ctx.fillRect(p.x*cell+2,p.y*cell+2,cell-4,cell-4);
+    });
     raf=requestAnimationFrame(loop);
-  } raf=requestAnimationFrame(loop);
+  }
+  raf=requestAnimationFrame(loop);
 }
+function addTrackedListener(target,event,fn,options) {
+  target.addEventListener(event,fn,options);
+  trackCleanup(()=>target.removeEventListener(event,fn,options));
+}
+function rand(min,max) { return Math.floor(Math.random()*(max-min+1))+min; }
+function clamp(n,min,max) { return Math.max(min,Math.min(max,n)); }
 
-function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
-function clamp(n,min,max){return Math.max(min,Math.min(max,n));}
-
-renderMenu();
+updateSoundButton();
 </script>
 </body>
 </html>
