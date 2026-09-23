@@ -1,1325 +1,638 @@
-```html
-<!DOCTYPE html>
-<html lang="en" class="dark">
+<!doctype html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Neon Arcade Hub - 10 Mobile Mini-Games</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        darkBg: '#090d16',
-                        cardBg: '#131b2e',
-                        neonCyan: '#06b6d4',
-                        neonPurple: '#a855f7',
-                        neonPink: '#ec4899',
-                        neonGreen: '#10b981',
-                        neonYellow: '#f59e0b'
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Google Fonts Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #090d16;
-            color: #f8fafc;
-            user-select: none;
-            -webkit-user-select: none;
-            touch-action: manipulation;
-            overflow-x: hidden;
-        }
-        .glow-cyan {
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
-        }
-        .glow-purple {
-            box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
-        }
-        .glow-pink {
-            box-shadow: 0 0 20px rgba(236, 72, 153, 0.4);
-        }
-        .glow-green {
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
-        }
-        /* Custom smooth scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #090d16;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1e293b;
-            border-radius: 9999px;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7f7f5">
+<title>Tile Master Arcade</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg:#f7f7f5; --surface:#fff; --ink:#232521; --muted:#858981;
+  --line:#e7e8e3; --accent:#506b59; --soft:#e9f0ea; --bad:#b85850;
+  --radius:17px;
+}
+* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body {
+  margin:0; min-height:100vh; min-height:100dvh; background:var(--bg);
+  color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+  overscroll-behavior:none;
+}
+button,input { font:inherit; color:inherit; }
+button { cursor:pointer; touch-action:manipulation; }
+.app { width:min(100% - 28px, 760px); margin:0 auto; padding:18px 0 max(22px,env(safe-area-inset-bottom)); }
+header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:22px; }
+.brand { display:flex; align-items:center; gap:11px; }
+.logo {
+  width:43px; height:43px; display:grid; place-items:center;
+  border-radius:14px; color:var(--accent); background:var(--soft);
+}
+.logo svg { width:25px; height:25px; }
+h1 { margin:0; font-size:21px; letter-spacing:-.6px; }
+.subtitle { margin:3px 0 0; color:var(--muted); font-size:12px; }
+.top-actions { display:flex; gap:7px; }
+.icon-btn,.back {
+  min-height:40px; padding:8px 11px; border:1px solid var(--line);
+  border-radius:12px; background:var(--surface); color:var(--muted); font-size:12px;
+}
+.icon-btn svg,.back svg { width:16px; height:16px; vertical-align:-4px; margin-right:4px; }
+.intro { margin:0 0 15px; }
+.intro h2 { margin:0; font-size:21px; letter-spacing:-.5px; }
+.intro p { margin:5px 0 0; color:var(--muted); font-size:13px; line-height:1.5; }
+.grid {
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px;
+}
+.game-card {
+  display:flex; align-items:center; gap:12px; min-height:91px; padding:14px;
+  text-align:left; border:1px solid var(--line); border-radius:var(--radius);
+  background:var(--surface); box-shadow:0 2px 6px #20282006;
+}
+.game-card:active { transform:scale(.985); }
+.game-icon {
+  width:43px; height:43px; flex:0 0 43px; display:grid; place-items:center;
+  border-radius:14px; color:var(--accent); background:var(--soft);
+}
+.game-icon svg { width:23px; height:23px; }
+.card-copy { min-width:0; flex:1; }
+.card-copy strong { display:block; font-size:14px; }
+.card-copy small { display:block; margin-top:4px; color:var(--muted); font-size:11px; line-height:1.35; }
+.best { color:var(--muted); font-size:10px; text-align:right; white-space:nowrap; }
+.best strong { display:block; color:var(--accent); font-size:16px; }
+.game-screen { min-height:65vh; display:flex; flex-direction:column; }
+.game-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:15px; }
+.game-head h2 { margin:0; font-size:20px; }
+.score-line { display:flex; justify-content:space-between; gap:12px; padding:12px 14px; border:1px solid var(--line); border-radius:14px; background:var(--surface); }
+.score-line span { color:var(--muted); font-size:12px; }
+.score-line strong { font-size:23px; font-variant-numeric:tabular-nums; }
+.progress { height:6px; margin-top:9px; overflow:hidden; border-radius:9px; background:#e9eae6; }
+.fill { width:100%; height:100%; transform-origin:left; transform:scaleX(1); background:var(--accent); }
+.prompt { min-height:54px; display:grid; place-items:center; margin:14px 0; text-align:center; }
+.prompt strong { font-size:18px; }
+.prompt small { display:block; margin-top:4px; color:var(--muted); }
+.tiles { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; width:min(100%,390px); margin:auto; }
+.tile {
+  aspect-ratio:1; border:1px solid var(--line); border-radius:15px;
+  background:var(--surface); font-size:clamp(28px,8vw,42px); font-weight:750;
+}
+.tile.target,.tile.lit { color:var(--accent); background:var(--soft); border-color:#bdcdbf; }
+.tile.wrong { color:var(--bad); background:#f8e9e7; border-color:#dfaaa3; }
+.tile:active,.choice:active,.pad:active,.direction:active { transform:scale(.95); }
+.controls { display:flex; flex-wrap:wrap; justify-content:center; gap:9px; margin-top:16px; }
+.choice,.direction,.pad {
+  min-height:48px; padding:11px 16px; border:1px solid var(--line);
+  border-radius:13px; background:var(--surface); font-weight:700;
+}
+.choice { flex:1; min-width:95px; }
+.pad-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; width:min(100%,360px); margin:auto; }
+.pad { min-height:100px; border-radius:22px; opacity:.75; }
+.pad.active { opacity:1; outline:3px solid var(--ink); }
+.canvas-wrap { width:min(100%,420px); margin:auto; }
+canvas { display:block; width:100%; border:1px solid var(--line); border-radius:15px; background:#fbfbfa; touch-action:none; }
+.type-input { width:100%; padding:14px; border:1px solid var(--line); border-radius:13px; background:var(--surface); font-size:19px; text-align:center; }
+.note { min-height:21px; text-align:center; color:var(--muted); font-size:12px; }
+dialog { width:min(90vw,370px); padding:24px; border:1px solid var(--line); border-radius:21px; background:var(--surface); color:var(--ink); text-align:center; }
+dialog::backdrop { background:#17201866; }
+dialog h2 { margin:0 0 8px; }
+dialog p { color:var(--muted); font-size:13px; line-height:1.5; }
+.primary { width:100%; min-height:47px; border:0; border-radius:13px; background:var(--accent); color:white; font-weight:750; }
+.empty { grid-column:1/-1; padding:24px; color:var(--muted); text-align:center; }
+@media(max-width:380px) {
+  .app { width:min(100% - 22px,760px); }
+  .grid { gap:8px; }
+  .game-card { padding:11px; gap:9px; }
+  .best { display:none; }
+}
+@media(prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none!important; } }
+</style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-white">
-
-    <header class="w-full px-4 py-4 bg-darkBg/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-800/80 flex items-center justify-between">
-        <div class="flex items-center space-x-3 cursor-pointer" onclick="returnToMenu()">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-purple-600 flex items-center justify-center glow-cyan">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21.5l-5-3.5V9l5 3.5 5-3.5v9l-5 3.5z"/></svg>
-            </div>
-            <div>
-                <h1 class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500 bg-clip-text text-transparent">NEON ARCADE HUB</h1>
-                <p class="text-xs text-slate-400 font-medium">10 Mobile Mini-Games vs AI</p>
-            </div>
-        </div>
-        <div id="header-controls" class="hidden">
-            <button onclick="returnToMenu()" class="px-4 py-2 bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition active:scale-95 flex items-center space-x-1.5 shadow-lg">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-                <span>MENU</span>
-            </button>
-        </div>
-    </header>
-
-    <main id="app-container" class="flex-1 flex flex-col w-full max-w-md mx-auto p-4 pb-12">
-        <!-- Main Menu View rendered dynamically -->
-    </main>
-
-    <footer class="w-full py-4 text-center text-xs text-slate-500 border-t border-slate-800/50">
-        <p>Neon Arcade Hub &bull; Optimized for Mobile Touchscreens</p>
-    </footer>
-
-    <script>
-        // Audio & Haptic Utility Helper
-        const AudioFX = {
-            ctx: null,
-            init() {
-                if (!this.ctx) {
-                    const AudioContext = window.AudioContext || window.webkitAudioContext;
-                    if (AudioContext) this.ctx = new AudioContext();
-                }
-            },
-            play(type) {
-                try {
-                    this.init();
-                    if (!this.ctx) return;
-                    if (this.ctx.state === 'suspended') this.ctx.resume();
-                    
-                    const osc = this.ctx.createOscillator();
-                    const gain = this.ctx.createGain();
-                    osc.connect(gain);
-                    gain.connect(this.ctx.destination);
-                    const now = this.ctx.currentTime;
-
-                    if (type === 'tap') {
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(400, now);
-                        osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
-                        gain.gain.setValueAtTime(0.15, now);
-                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-                        osc.start(now);
-                        osc.stop(now + 0.08);
-                    } else if (type === 'score') {
-                        osc.type = 'triangle';
-                        osc.frequency.setValueAtTime(523.25, now); // C5
-                        osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
-                        gain.gain.setValueAtTime(0.2, now);
-                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-                        osc.start(now);
-                        osc.stop(now + 0.25);
-                    } else if (type === 'error') {
-                        osc.type = 'sawtooth';
-                        osc.frequency.setValueAtTime(180, now);
-                        osc.frequency.linearRampToValueAtTime(90, now + 0.2);
-                        gain.gain.setValueAtTime(0.25, now);
-                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-                        osc.start(now);
-                        osc.stop(now + 0.2);
-                    } else if (type === 'win') {
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(440, now);
-                        osc.frequency.setValueAtTime(554.37, now + 0.1);
-                        osc.frequency.setValueAtTime(659.25, now + 0.2);
-                        gain.gain.setValueAtTime(0.2, now);
-                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-                        osc.start(now);
-                        osc.stop(now + 0.4);
-                    }
-                } catch(e) {}
-            }
-        };
-
-        function vibrate(pattern = 30) {
-            if (navigator.vibrate) {
-                try { navigator.vibrate(pattern); } catch(e) {}
-            }
-        }
-
-        // Game definitions data structure
-        const GAMES = [
-            {
-                id: 'gridtap',
-                title: 'Grid Tap Blitz',
-                desc: 'Tap correct glowing tiles before 5s runs out vs AI ghost!',
-                icon: '⚡',
-                color: 'from-cyan-500 to-blue-600',
-                glow: 'glow-cyan'
-            },
-            {
-                id: 'pong',
-                title: 'Neon Pong Solo',
-                desc: 'Fast reflex arcade paddle wall bounce vs reactive AI paddle.',
-                icon: '🏓',
-                color: 'from-purple-500 to-indigo-600',
-                glow: 'glow-purple'
-            },
-            {
-                id: 'colorswitch',
-                title: 'Color Switch Reflex',
-                desc: 'Match falling neon color segments instantly under pressure.',
-                icon: '🎨',
-                color: 'from-pink-500 to-rose-600',
-                glow: 'glow-pink'
-            },
-            {
-                id: 'memory',
-                title: 'Simon Says AI',
-                desc: 'Watch the AI light up pads, then repeat longer patterns.',
-                icon: '🧠',
-                color: 'from-emerald-500 to-teal-600',
-                glow: 'glow-green'
-            },
-            {
-                id: 'mathblitz',
-                title: 'Math Blitz Speed',
-                desc: 'Solve lightning-fast true/false equations racing the AI.',
-                icon: '🔢',
-                color: 'from-amber-500 to-orange-600',
-                glow: 'glow-cyan'
-            },
-            {
-                id: 'swipedodge',
-                title: 'Swipe Direction',
-                desc: 'Tap arrow commands instantly while avoiding AI traps.',
-                icon: '⬅️',
-                color: 'from-cyan-600 to-teal-500',
-                glow: 'glow-cyan'
-            },
-            {
-                id: 'coindrop',
-                title: 'Coin Drop Catcher',
-                desc: 'Slide basket left/right to catch coins, dodge red spikes.',
-                icon: '🪙',
-                color: 'from-yellow-500 to-amber-600',
-                glow: 'glow-purple'
-            },
-            {
-                id: 'wordrush',
-                title: 'Word Scramble',
-                desc: 'Unscramble everyday rapid words against AI timer.',
-                icon: '🔤',
-                color: 'from-purple-600 to-pink-500',
-                glow: 'glow-pink'
-            },
-            {
-                id: 'rhythm',
-                title: 'Tap the Beat',
-                desc: 'Tap pulsing rhythm notes precisely in time with AI.',
-                icon: '🎵',
-                color: 'from-rose-500 to-red-600',
-                glow: 'glow-green'
-            },
-            {
-                id: 'snake',
-                title: 'Cyber Snake Mini',
-                desc: 'Eat data pulses while dodging walls and your growing tail.',
-                icon: '🐍',
-                color: 'from-emerald-400 to-cyan-600',
-                glow: 'glow-green'
-            }
-        ];
-
-        // Highscore store helper
-        function getHighScore(gameId) {
-            return parseInt(localStorage.getItem('neon_hub_' + gameId) || '0', 10);
-        }
-        function setHighScore(gameId, score) {
-            const current = getHighScore(gameId);
-            if (score > current) {
-                localStorage.setItem('neon_hub_' + gameId, score);
-                return true;
-            }
-            return false;
-        }
-
-        // Active game handler reference
-        let currentGameInterval = null;
-        let currentGameListener = null;
-
-        function clearActiveGame() {
-            if (currentGameInterval) {
-                clearInterval(currentGameInterval);
-                currentGameInterval = null;
-            }
-            if (currentGameListener) {
-                window.removeEventListener('keydown', currentGameListener);
-                currentGameListener = null;
-            }
-        }
-
-        function returnToMenu() {
-            clearActiveGame();
-            document.getElementById('header-controls').classList.add('hidden');
-            renderMenu();
-        }
-
-        // Render Main Menu
-        function renderMenu() {
-            const container = document.getElementById('app-container');
-            let html = `
-                <div class="mb-6 text-center">
-                    <h2 class="text-2xl font-black tracking-tight text-white mb-1">SELECT A MINI-GAME</h2>
-                    <p class="text-xs text-slate-400">Tap any card to launch & beat the AI ghost!</p>
-                </div>
-                <div class="grid grid-cols-1 gap-3.5">
-            `;
-
-            GAMES.forEach(g => {
-                const best = getHighScore(g.id);
-                html += `
-                    <div onclick="launchGame('${g.id}')" class="group bg-cardBg hover:bg-slate-800/80 border border-slate-800 hover:border-slate-700 rounded-2xl p-4 flex items-center justify-between cursor-pointer transition-all active:scale-[0.98] shadow-lg">
-                        <div class="flex items-center space-x-3.5">
-                            <div class="w-12 h-12 rounded-xl bg-gradient-to-tr ${g.color} flex items-center justify-center text-2xl shadow-md group-hover:scale-105 transition-transform">
-                                ${g.icon}
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-sm text-white group-hover:text-cyan-400 transition-colors">${g.title}</h3>
-                                <p class="text-xs text-slate-400 line-clamp-1 mt-0.5">${g.desc}</p>
-                            </div>
-                        </div>
-                        <div class="text-right pl-2">
-                            <div class="text-[10px] uppercase font-bold text-slate-500">Best</div>
-                            <div class="text-sm font-extrabold text-cyan-400">${best}</div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            html += `</div>`;
-            container.innerHTML = html;
-        }
-
-        function launchGame(gameId) {
-            clearActiveGame();
-            document.getElementById('header-controls').classList.remove('hidden');
-            const container = document.getElementById('app-container');
-            
-            switch(gameId) {
-                case 'gridtap': initGridTap(container); break;
-                case 'pong': initPong(container); break;
-                case 'colorswitch': initColorSwitch(container); break;
-                case 'memory': initMemory(container); break;
-                case 'mathblitz': initMathBlitz(container); break;
-                case 'swipedodge': initSwipeDodge(container); break;
-                case 'coindrop': initCoinDrop(container); break;
-                case 'wordrush': initWordRush(container); break;
-                case 'rhythm': initRhythm(container); break;
-                case 'snake': initSnake(container); break;
-            }
-        }
-
-        // ==========================================
-        // 1. GRID TAP BLITZ
-        // ==========================================
-        function initGridTap(container) {
-            container.innerHTML = `
-                <div class="flex flex-col h-full space-y-4">
-                    <div class="flex justify-between items-center bg-cardBg p-3 rounded-2xl border border-slate-800">
-                        <div><div class="text-[10px] font-bold text-slate-400">YOU</div><div id="gt-score" class="text-xl font-black text-cyan-400">0</div></div>
-                        <div><div class="text-[10px] font-bold text-slate-400">AI GHOST</div><div id="gt-aiscore" class="text-xl font-black text-purple-400">0</div></div>
-                        <div class="text-right"><div class="text-[10px] font-bold text-slate-400">BEST</div><div class="text-xl font-black text-slate-200" id="gt-best">${getHighScore('gridtap')}</div></div>
-                    </div>
-                    <div class="space-y-1">
-                        <div class="flex justify-between text-xs font-semibold text-slate-300"><span>TIME LEFT</span><span id="gt-time">5.00s</span></div>
-                        <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden"><div id="gt-timer-bar" class="bg-gradient-to-r from-cyan-500 to-green-400 h-full w-full transition-all"></div></div>
-                    </div>
-                    <div id="gt-board" class="grid grid-cols-3 gap-3 aspect-square my-auto"></div>
-                    <div id="gt-msg" class="text-center text-xs font-bold text-slate-400">Tap the green tile before time runs out!</div>
-                </div>
-            `;
-
-            let score = 0, aiScore = 0, timeLeft = 5.0, activeIndex = -1, isOver = false;
-            let aiTimer = 0.6; // AI scores every 0.6s
-
-            const board = document.getElementById('gt-board');
-            for(let i=0; i<9; i++) {
-                const tile = document.createElement('div');
-                tile.className = 'bg-slate-800/80 rounded-2xl border border-slate-700/50 cursor-pointer transition-transform active:scale-90 flex items-center justify-center';
-                tile.dataset.index = i;
-                tile.addEventListener('click', () => handleTap(i));
-                board.appendChild(tile);
-            }
-
-            function nextRound() {
-                if (isOver) return;
-                activeIndex = Math.floor(Math.random() * 9);
-                renderTiles();
-            }
-
-            function renderTiles() {
-                const tiles = board.children;
-                for(let i=0; i<tiles.length; i++) {
-                    if (i === activeIndex) {
-                        tiles[i].className = 'bg-neonGreen rounded-2xl border border-emerald-400 cursor-pointer transition-transform active:scale-90 flex items-center justify-center glow-green';
-                        tiles[i].innerHTML = '<div class="w-4 h-4 bg-emerald-900 rotate-45 rounded-sm"></div>';
-                    } else {
-                        tiles[i].className = 'bg-slate-800/80 rounded-2xl border border-slate-700/50 cursor-pointer transition-transform active:scale-90 flex items-center justify-center';
-                        tiles[i].innerHTML = '';
-                    }
-                }
-            }
-
-            function handleTap(idx) {
-                if (isOver) return;
-                if (idx === activeIndex) {
-                    AudioFX.play('tap');
-                    vibrate(30);
-                    score++;
-                    timeLeft = Math.min(6.0, timeLeft + 0.4);
-                    document.getElementById('gt-score').textContent = score;
-                    nextRound();
-                } else {
-                    gameOver("Wrong tile tapped!");
-                }
-            }
-
-            function gameOver(reason) {
-                isOver = window.isGameOver = true;
-                clearActiveGame();
-                AudioFX.play('error');
-                vibrate(100);
-                const isNew = setHighScore('gridtap', score);
-                container.innerHTML = `
-                    <div class="my-auto text-center space-y-4 bg-cardBg p-6 rounded-3xl border border-slate-800 shadow-xl">
-                        <div class="text-4xl">⚡</div>
-                        <h2 class="text-xl font-extrabold text-white">GAME OVER</h2>
-                        <p class="text-xs text-slate-400">${reason}</p>
-                        <div class="grid grid-cols-2 gap-3 py-2">
-                            <div class="bg-slate-900/60 p-3 rounded-2xl"><div class="text-xs text-slate-500">Your Score</div><div class="text-2xl font-black text-cyan-400">${score}</div></div>
-                            <div class="bg-slate-900/60 p-3 rounded-2xl"><div class="text-xs text-slate-500">AI Ghost</div><div class="text-2xl font-black text-purple-400">${aiScore}</div></div>
-                        </div>
-                        ${isNew ? '<div class="text-xs font-bold text-amber-400 animate-pulse">🎉 NEW PERSONAL BEST!</div>' : ''}
-                        <button onclick="launchGame('gridtap')" class="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-2xl shadow-lg active:scale-95 transition">PLAY AGAIN</button>
-                    </div>
-                `;
-            }
-
-            nextRound();
-            currentGameInterval = setInterval(() => {
-                if (isOver) return;
-                timeLeft -= 0.05;
-                if (timeLeft <= 0) {
-                    gameOver("Time ran out!");
-                    return;
-                }
-                document.getElementById('gt-time').textContent = timeLeft.toFixed(2) + 's';
-                document.getElementById('gt-timer-bar').style.width = (timeLeft / 6.0 * 100) + '%';
-
-                // AI Progress
-                aiTimer -= 0.05;
-                if (aiTimer <= 0) {
-                    aiScore++;
-                    document.getElementById('gt-aiscore').textContent = aiScore;
-                    aiTimer = Math.max(0.3, 0.6 - (score * 0.005));
-                    if (aiScore > score + 10) {
-                        gameOver("AI Ghost outpaced you!");
-                    }
-                }
-            }, 50);
-        }
-
-        // ==========================================
-        // 2. NEON PONG SOLO (AI Wall)
-        // ==========================================
-        void function initPong(container) {
-            container.innerHTML = `
-                <div class="flex flex-col h-full space-y-3">
-                    <div class="flex justify-between items-center bg-cardBg p-3 rounded-2xl border border-slate-800">
-                        <div><div class="text-[10px] font-bold text-slate-400">SCORE</div><div id="p-score" class="text-xl font-black text-purple-400">0</div></div>
-                        <div class="text-right"><div class="text-[10px] font-bold text-slate-400">BEST</div><div class="text-xl font-black text-slate-200">${getHighScore('pong')}</div></div>
-                    </div>
-                    <div class="relative w-full aspect-[3/4] bg-slate-950 rounded-3xl border border-slate-800 overflow-hidden touch-none" id="pong-area">
-                        <canvas id="pong-canvas" class="w-full h-full block"></canvas>
-                    </div>
-                    <p class="text-center text-xs text-slate-400">Drag paddle left/right or use touch to bounce ball.</p>
-                </div>
-            `;
-
-            const canvas = document.getElementById('pong-canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = 350; canvas.height = 450;
-
-            let score = 0, isOver = false;
-            let ball = { x: 175, y: 100, vx: 3, vy: 4, radius: 8 };
-            let paddle = { x: 140, y: 420, w: 90, h: 14 };
-            let aiPaddle = { x: 140, y: 16, w: 90, h: 14 };
-
-            const area = document.getElementById('pong-area');
-            area.addEventListener('touchmove', (e) => {
-                const rect = canvas.getBoundingClientRect();
-                const touchX = e.touches[0].clientX - rect.left;
-                paddle.x = Math.max(0, Math.min(canvas.width - paddle.w, touchX - paddle.w/2));
-            });
-            area.addEventListener('mousemove', (e) => {
-                const rect = canvas.getBoundingClientRect();
-                const mouseX = e.clientX - rect.left;
-                paddle.x = Math.max(0, Math.min(canvas.width - paddle.w, mouseX - paddle.w/2));
-            });
-
-            currentGameInterval = setInterval(() => {
-                if (isOver) return;
-
-                // Move Ball
-                ball.x += ball.vx;
-                ball.y += ball.vy;
-
-                // Wall bounce
-                if (ball.x - ball.radius < 0 || ball.x + ball.radius > canvas.width) {
-                    ball.vx *= -1;
-                    AudioFX.play('tap');
-                }
-
-                // AI Paddle Track
-                aiPaddle.x += (ball.x - (aiPaddle.x + aiPaddle.w/2)) * 0.08;
-                aiPaddle.x = Math.max(0, Math.min(canvas.width - aiPaddle.w, aiPaddle.x));
-
-                // AI paddle bounce
-                if (ball.y - ball.radius <= aiPaddle.y + aiPaddle.h && ball.x >= aiPaddle.x && ball.x <= aiPaddle.x + aiPaddle.w) {
-                    ball.vy *= -1;
-                    ball.y = aiPaddle.y + aiPaddle.h + ball.radius;
-                    AudioFX.play('tap');
-                }
-
-                // Player paddle bounce
-                if (ball.y + ball.radius >= paddle.y && ball.x >= paddle.x && ball.x <= paddle.x + paddle.w) {
-                    ball.vy *= -1;
-                    ball.y = paddle.y - ball.radius;
-                    score++;
-                    document.getElementById('p-score').textContent = score;
-                    AudioFX.play('score');
-                    vibrate(30);
-                    // Slight speed increase
-                    ball.vx *= 1.02;
-                    ball.vy *= 1.02;
-                }
-
-                // Floor check (Game Over)
-                if (ball.y > canvas.height) {
-                    isOver = true;
-                    clearActiveGame();
-                    AudioFX.play('error');
-                    vibrate(100);
-                    const isNew = setHighScore('pong', score);
-                    container.innerHTML = `
-                        <div class="my-auto text-center space-y-4 bg-cardBg p-6 rounded-3xl border border-slate-800 shadow-xl">
-                            <div class="text-4xl">🏓</div>
-                            <h2 class="text-xl font-extrabold text-white">GAME OVER</h2>
-                            <p class="text-xs text-slate-400">The ball slipped past your paddle!</p>
-                            <div class="bg-slate-900/60 p-3 rounded-2xl"><div class="text-xs text-slate-500">Final Score</div><div class="text-2xl font-black text-purple-400">${score}</div></div>
-                            ${isNew ? '<div class="text-xs font-bold text-amber-400 animate-pulse">🎉 NEW PERSONAL BEST!</div>' : ''}
-                            <button onclick="launchGame('pong')" class="w-full py-3 bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold rounded-2xl shadow-lg active:scale-95 transition">PLAY AGAIN</button>
-                        </div>
-                    `;
-                    return;
-                }
-
-                // Ceiling bounce if AI misses
-                if (ball.y < 0) {
-                    ball.vy *= -1;
-                }
-
-                // Render Canvas
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                // Draw Ball
-                ctx.fillStyle = '#ec4899';
-                ctx.shadowColor = '#ec4899'; ctx.shadowBlur = 12;
-                ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI*2); ctx.fill();
-                ctx.shadowBlur = 0;
-
-                // Draw AI Paddle
-                ctx.fillStyle = '#a855f7';
-                ctx.fillRect(aiPaddle.x, aiPaddle.y, aiPaddle.w, aiPaddle.h);
-
-                // Draw Player Paddle
-                ctx.fillStyle = '#06b6d4';
-                ctx.shadowColor = '#06b6d4'; ctx.shadowBlur = 10;
-                ctx.fillRect(paddle.x, paddle.y, paddle.w, paddle.h);
-                ctx.shadowBlur = 0;
-
-            }, 1000 / 60);
-        }
-
-        // ==========================================
-        // 3. COLOR SWITCH REFLEX
-        // ==========================================
-        function initColorSwitch(container) {
-            const COLORS = ['#06b6d4', '#a855f7', '#ec4899', '#10b981'];
-            const COLOR_NAMES = ['CYAN', 'PURPLE', 'PINK', 'GREEN'];
-            
-            container.innerHTML = `
-                <div class="flex flex-col h-full space-y-4">
-                    <div class="flex justify-between items-center bg-cardBg p-3 rounded-2xl border border-slate-800">
-                        <div><div class="text-[10px] font-bold text-slate-400">SCORE</div><div id="cs-score" class="text-xl font-black text-pink-400">0</div></div>
-                        <div class="text-right"><div class="text-[10px] font-bold text-slate-400">BEST</div><div class="text-xl font-black text-slate-200">${getHighScore('colorswitch')}</div></div>
-                    </div>
-                    <div class="space-y-1">
-                        <div class="flex justify-between text-xs font-semibold text-slate-300"><span>TIME</span><span id="cs-time">3.00s</span></div>
-                        <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden"><div id="cs-timer" class="bg-gradient-to-r from-pink-500 to-rose-400 h-full w-full"></div></div>
-                    </div>
-                    <div class="my-auto bg-cardBg p-8 rounded-3xl border border-slate-800 text-center space-y-6 shadow-xl">
-                        <div class="text-xs uppercase tracking-wider text-slate-400">Match the color name to button</div>
-                        <div id="cs-target-word" class="text-4xl font-black uppercase tracking-wide text-cyan-400">CYAN</div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3 pb-4">
-                        <button onclick="handleColorClick(0)" class="h-20 bg-cyan-500 rounded-2xl font-bold text-white text-lg shadow-lg active:scale-95 transition">CYAN</button>
-                        <button onclick="handleColorClick(1)" class="h-20 bg-purple-500 rounded-2xl font-bold text-white text-lg shadow-lg active:scale-95 transition">PURPLE</button>
-                        <button onclick="handleColorClick(2)" class="h-20 bg-pink-500 rounded-2xl font-bold text-white text-lg shadow-lg active:scale-95 transition">PINK</button>
-                        <button onclick="handleColorClick(3)" class="h-20 bg-emerald-500 rounded-2xl font-bold text-white text-lg shadow-lg active:scale-95 transition">GREEN</button>
-                    </div>
-                </div>
-            `;
-
-            let score = 0, targetIndex = 0, timeLeft = 3.0, isOver = false;
-
-            function nextChallenge() {
-                if (isOver) return;
-                targetIndex = Math.floor(Math.random() * 4);
-                const wordEl = document.getElementById('cs-target-word');
-                wordEl.textContent = COLOR_NAMES[targetIndex];
-                wordEl.style.color = COLORS[Math.floor(Math.random() * 4)];
-                timeLeft = Math.max(1.8, 3.0 - (score * 0.05));
-            }
-
-            window.handleColorClick = function(idx) {
-                if (isOver) return;
-                if (idx === targetIndex) {
-                    AudioFX.play('tap');
-                    vibrate(30);
-                    score++;
-                    document.getElementById('cs-score').textContent = score;
-                    nextChallenge();
-                } else {
-                    gameOver("Incorrect color matched!");
-                }
-            };
-
-            function gameOver(reason) {
-                isOver = window.isGameOver = true;
-                clearActiveGame();
-                AudioFX.play('error');
-                vibrate(100);
-                const isNew = setHighScore('colorswitch', score);
-                container.innerHTML = `
-                    <div class="my-auto text-center space-y-4 bg-cardBg p-6 rounded-3xl border border-slate-800 shadow-xl">
-                        <div class="text-4xl">🎨</div>
-                        <h2 class="text-xl font-extrabold text-white">GAME OVER</h2>
-                        <p class="text-xs text-slate-400">${reason}</p>
-                        <div class="bg-slate-900/60 p-3 rounded-2xl"><div class="text-xs text-slate-500">Score</div><div class="text-2xl font-black text-pink-400">${score}</div></div>
-                        ${isNew ? '<div class="text-xs font-bold text-amber-400 animate-pulse">🎉 NEW PERSONAL BEST!</div>' : ''}
-                        <button onclick="launchGame('colorswitch')" class="w-full py-3 bg-gradient-to-r from-pink-500 to-rose-600 text-white font-bold rounded-2xl shadow-lg active:scale-95 transition">PLAY AGAIN</button>
-                    </div>
-                `;
-            }
-
-            nextChallenge();
-            currentGameInterval = setInterval(() => {
-                if (isOver) return;
-                timeLeft -= 0.05;
-                if (timeLeft <= 0) {
-                    gameOver("Time ran out!");
-                    return;
-                }
-                document.getElementById('cs-time').textContent = timeLeft.toFixed(2) + 's';
-                document.getElementById('cs-timer').style.width = (timeLeft / 3.0 * 100) + '%';
-            }, 50);
-        }
-
-        // ==========================================
-        // 4. MEMORY SEQUENCE (SIMON SAYS AI)
-        // ==========================================
-        function initMemory(container) {
-            container.innerHTML = `
-                <div class="flex flex-col h-full space-y-4">
-                    <div class="flex justify-between items-center bg-cardBg p-3 rounded-2xl border border-slate-800">
-                        <div><div class="text-[10px] font-bold text-slate-400">ROUND</div><div id="m-score" class="text-xl font-black text-emerald-400">1</div></div>
-                        <div class="text-right"><div class="text-[10px] font-bold text-slate-400">BEST</div><div class="text-xl font-black text-slate-200">${getHighScore('memory')}</div></div>
-                    </div>
-                    <div id="m-status" class="text-center text-xs font-bold text-amber-400 animate-pulse">AI is showing pattern...</div>
-                    <div class="grid grid-cols-2 gap-3 aspect-square my-auto max-w-xs mx-auto w-full">
-                        <button id="mp-0" onclick="handlePadClick(0)" class="bg-cyan-500/30 border border-cyan-500 rounded-3xl active:bg-cyan-400 transition shadow-lg"></button>
-                        <button id="mp-1" onclick="handlePadClick(1)" class="bg-purple-500/30 border border-purple-500 rounded-3xl active:bg-purple-400 transition shadow-lg"></button>
-                        <button id="mp-2" onclick="handlePadClick(2)" class="bg-pink-500/30 border border-pink-500 rounded-3xl active:bg-pink-400 transition shadow-lg"></button>
-                        <button id="mp-3" onclick="handlePadClick(3)" class="bg-emerald-500/30 border border-emerald-500 rounded-3xl active:bg-emerald-400 transition shadow-lg"></button>
-                    </div>
-                </div>
-            `;
-
-            let sequence = [], playerIndex = 0, isPlayingAI = true, isOver = false;
-            let round = 1;
-
-            function nextSequenceStep() {
-                sequence.push(Math.floor(Math.random() * 4));
-                playerIndex = 0;
-                isPlayingAI = true;
-                document.getElementById('m-status').textContent = "AI is showing pattern...";
-                document.getElementById('m-status').className = "text-center text-xs font-bold text-amber-400 animate-pulse";
-                
-                let i = 0;
-                const interval = setInterval(() => {
-                    if (i > 0) flashPadOff(sequence[i-1]);
-                    if (i < sequence.length) {
-                        flashPadOn(sequence[i]);
-                        AudioFX.play('tap');
-                        i++;
-                    } else {
-                        clearInterval(interval);
-                        isPlayingAI = false;
-                        document.getElementById('m-status').textContent = "Your turn! Repeat pattern.";
-                        document.getElementById('m-status').className = "text-center text-xs font-bold text-cyan-400";
-                    }
-                }, 600);
-            }
-
-            function flashPadOn(idx) {
-                const el = document.getElementById('mp-' + idx);
-                if (el) el.style.opacity = '1';
-            }
-            function flashPadOff(idx) {
-                const el = document.getElementById('mp-' + idx);
-                if (el) el.style.opacity = '0.3';
-            }
-
-            window.handlePadClick = function(idx) {
-                if (isPlayingAI || isOver) return;
-                flashPadOn(idx);
-                setTimeout(() => flashPadOff(idx), 200);
-                AudioFX.play('tap');
-                vibrate(30);
-
-                if (idx === sequence[playerIndex]) {
-                    playerIndex++;
-                    if (playerIndex === sequence.length) {
-                        round++;
-                        document.getElementById('m-score').textContent = round;
-                        setTimeout(nextSequenceStep, 800);
-                    }
-                } else {
-                    gameOver("Incorrect pad tapped!");
-                }
-            };
-
-            function gameOver(reason) {
-                isOver = window.isGameOver = true;
-                clearActiveGame();
-                AudioFX.play('error');
-                vibrate(100);
-                const score = round - 1;
-                const isNew = setHighScore('memory', score);
-                container.innerHTML = `
-                    <div class="my-auto text-center space-y-4 bg-cardBg p-6 rounded-3xl border border-slate-800 shadow-xl">
-                        <div class="text-4xl">🧠</div>
-                        <h2 class="text-xl font-extrabold text-white">GAME OVER</h2>
-                        <p class="text-xs text-slate-400">${reason}</p>
-                        <div class="bg-slate-900/60 p-3 rounded-2xl"><div class="text-xs text-slate-500">Rounds Completed</div><div class="text-2xl font-black text-emerald-400">${score}</div></div>
-                        ${isNew ? '<div class="text-xs font-bold text-amber-400 animate-pulse">🎉 NEW PERSONAL BEST!</div>' : ''}
-                        <button onclick="launchGame('memory')" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold rounded-2xl shadow-lg active:scale-95 transition">PLAY AGAIN</button>
-                    </div>
-                `;
-            }
-
-            // Set initial pad opacity
-            for(let i=0; i<4; i++) flashPadOff(i);
-            setTimeout(nextSequenceStep, 500);
-        }
-
-        // ==========================================
-        // 5. MATH BLITZ SPEED
-        // ==========================================
-        function initMathBlitz(container) {
-            container.innerHTML = `
-                <div class="flex flex-col h-full space-y-4">
-                    <div class="flex justify-between items-center bg-cardBg p-3 rounded-2xl border border-slate-800">
-                        <div><div class="text-[10px] font-bold text-slate-400">SCORE</div><div id="mb-score" class="text-xl font-black text-amber-400">0</div></div>
-                        <div class="text-right"><div class="text-[10px] font-bold text-slate-400">BEST</div><div class="text-xl font-black text-slate-200">${getHighScore('mathblitz')}</div></div>
-                    </div>
-                    <div class="space-y-1">
-                        <div class="flex justify-between text-xs font-semibold text-slate-300"><span>TIME</span><span id="mb-time">4.00s</span></div>
-                        <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden"><div id="mb-timer" class="bg-gradient-to-r from-amber-500 to-orange-400 h-full w-full"></div></div>
-                    </div>
-                    <div class="my-auto bg-cardBg p-8 rounded-3xl border border-slate-800 text-center space-y-6 shadow-xl">
-                        <div class="text-xs uppercase tracking-wider text-slate-400">Is this equation correct?</div>
-                        <div id="mb-eq" class="text-3xl font-black text-white">12 + 8 = 20</div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 pb-4">
-                        <button onclick="handleMathAnswer(true)" class="py-5 bg-emerald-600 hover:bg-emerald-500 rounded-2xl font-extrabold text-white text-lg shadow-lg active:scale-95 transition">TRUE</button>
-                        <button onclick="handleMathAnswer(false)" class="py-5 bg-rose-600 hover:bg-rose-500 rounded-2xl font-extrabold text-white text-lg shadow-lg active:scale-95 transition">FALSE</button>
-                    </div>
-                </div>
-            `;
-
-            let score = 0, currentAnswer = true, timeLeft = 4.0, isOver = false;
-
-            function nextProblem() {
-                if (isOver) return;
-                const a = Math.floor(Math.random() * 20) + 1;
-                const b = Math.floor(Math.random() * 20) + 1;
-                const ops = ['+', '-', '*'];
-                const op = ops[Math.floor(Math.random() * ops.length)];
-                
-                let realAns = 0;
-                if (op === '+') realAns = a + b;
-                if (op === '-') realAns = a - b;
-                if (op === '*') realAns = a * b;
-
-                currentAnswer = Math.random() > 0.5;
-                let displayedAns = realAns;
-                if (!currentAnswer) {
-                    displayedAns = realAns + (Math.random() > 0.5 ? Math.floor(Math.random() * 5) + 1 : -(Math.floor(Math.random() * 5) + 1));
-                    if (displayedAns === realAns) displayedAns += 2;
-                }
-
-                document.getElementById('mb-eq').textContent = `${a} ${op} ${b} = ${displayedAns}`;
-                currentAnswer = (displayedAns === realAns);
-                timeLeft = Math.max(2.0, 4.0 - (score * 0.05));
-            }
-
-            window.handleMathAnswer = function(userAns) {
-                if (isOver) return;
-                if (userAns === currentAnswer) {
-                    AudioFX.play('tap');
-                    vibrate(30);
-                    score++;
-                    document.getElementById('mb-score').textContent = score;
-                    nextProblem();
-                } else {
-                    gameOver("Incorrect math answer!");
-                }
-            };
-
-            function gameOver(reason) {
-                isOver = window.isGameOver = true;
-                clearActiveGame();
-                AudioFX.play('error');
-                vibrate(100);
-                const isNew = setHighScore('mathblitz', score);
-                container.innerHTML = `
-                    <div class="my-auto text-center space-y-4 bg-cardBg p-6 rounded-3xl border border-slate-800 shadow-xl">
-                        <div class="text-4xl">🔢</div>
-                        <h2 class="text-xl font-extrabold text-white">GAME OVER</h2>
-                        <p class="text-xs text-slate-400">${reason}</p>
-                        <div class="bg-slate-900/60 p-3 rounded-2xl"><div class="text-xs text-slate-500">Score</div><div class="text-2xl font-black text-amber-400">${score}</div></div>
-                        ${isNew ? '<div class="text-xs font-bold text-amber-400 animate-pulse">🎉 NEW PERSONAL BEST!</div>' : ''}
-                        <button onclick="launchGame('mathblitz')" class="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold rounded-2xl shadow-lg active:scale-95 transition">PLAY AGAIN</button>
-                    </div>
-                `;
-            }
-
-            nextProblem();
-            currentGameInterval = setInterval(() => {
-                if (isOver) return;
-                timeLeft -= 0.05;
-                if (timeLeft <= 0) {
-                    gameOver("Time ran out!");
-                    return;
-                }
-                document.getElementById('mb-time').textContent = timeLeft.toFixed(2) + 's';
-                document.getElementById('mb-timer').style.width = (timeLeft / 4.0 * 100) + '%';
-            }, 50);
-        }
-
-        // ==========================================
-        // 6. SWIPE DIRECTION DODGE
-        // ==========================================
-        function initSwipeDodge(container) {
-            const ARROWS = ['⬆️', '⬇️', '⬅️', '➡️'];
-            const ARROW_NAMES = ['UP', 'DOWN', 'LEFT', 'RIGHT'];
-
-            container.innerHTML = `
-                <div class="flex flex-col h-full space-y-4">
-                    <div class="flex justify-between items-center bg-cardBg p-3 rounded-2xl border border-slate-800">
-                        <div><div class="text-[10px] font-bold text-slate-400">SCORE</div><div id="sd-score" class="text-xl font-black text-cyan-400">0</div></div>
-                        <div class="text-right"><div class="text-[10px] font-bold text-slate-400">BEST</div><div class="text-xl font-black text-slate-200">${getHighScore('swipedodge')}</div></div>
-                    </div>
-                    <div class="space-y-1">
-                        <div class="flex justify-between text-xs font-semibold text-slate-300"><span>TIME</span><span id="sd-time">3.50s</span></div>
-                        <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden"><div id="sd-timer" class="bg-gradient-to-r from-cyan-500 to-teal-400 h-full w-full"></div></div>
-                    </div>
-                    <div class="my-auto bg-cardBg p-8 rounded-3xl border border-slate-800 text-center space-y-6 shadow-xl">
-                        <div class="text-xs uppercase tracking-wider text-slate-400">Tap matching direction</div>
-                        <div id="sd-icon" class="text-6xl">⬆️</div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3 pb-4">
-                        <button onclick="handleSwipe(0)" class="py-4 bg-slate-800 hover:bg-slate-700 rounded-2xl font-bold text-white text-xl shadow-lg active:scale-95 transition border border-slate-700">⬆️ UP</button>
-                        <button onclick="handleSwipe(1)" class="py-4 bg-slate-800 hover:bg-slate-700 rounded-2xl font-bold text-white text-xl shadow-lg active:scale-95 transition border border-slate-700">⬇️ DOWN</button>
-                        <button onclick="handleSwipe(2)" class="py-4 bg-slate-800 hover:bg-slate-700 rounded-2xl font-bold text-white text-xl shadow-lg active:scale-95 transition border border-slate-700">⬅️ LEFT</button>
-                        <button onclick="handleSwipe(3)" class="py-4 bg-slate-800 hover:bg-slate-700 rounded-2xl font-bold text-white text-xl shadow-lg active:scale-95 transition border border-slate-700">➡️ RIGHT</button>
-                    </div>
-                </div>
-            `;
-
-            let score = 0, currentDir = 0, timeLeft = 3.5, isOver = false;
-
-            function nextDir() {
-                if (isOver) return;
-                currentDir = Math.floor(Math.random() * 4);
-                document.getElementById('sd-icon').textContent = ARROWS[currentDir];
-                timeLeft = Math.max(1.5, 3.5 - (score * 0.05));
-            }
-
-            window.handleSwipe = function(dir) {
-                if (isOver) return;
-                if (dir === currentDir) {
-                    AudioFX.play('tap');
-                    vibrate(30);
-                    score++;
-                    document.getElementById('sd-score').textContent = score;
-                    nextDir();
-                } else {
-                    gameOver("Wrong direction tapped!");
-                }
-            };
-
-            function gameOver(reason) {
-                isOver = window.isGameOver = true;
-                clearActiveGame();
-                AudioFX.play('error');
-                vibrate(100);
-                const isNew = setHighScore('swipedodge', score);
-                container.innerHTML = `
-                    <div class="my-auto text-center space-y-4 bg-cardBg p-6 rounded-3xl border border-slate-800 shadow-xl">
-                        <div class="text-4xl">⬅️</div>
-                        <h2 class="text-xl font-extrabold text-white">GAME OVER</h2>
-                        <p class="text-xs text-slate-400">${reason}</p>
-                        <div class="bg-slate-900/60 p-3 rounded-2xl"><div class="text-xs text-slate-500">Score</div><div class="text-2xl font-black text-cyan-400">${score}</div></div>
-                        ${isNew ? '<div class="text-xs font-bold text-amber-400 animate-pulse">🎉 NEW PERSONAL BEST!</div>' : ''}
-                        <button onclick="launchGame('swipedodge')" class="w-full py-3 bg-gradient-to-r from-cyan-600 to-teal-500 text-white font-bold rounded-2xl shadow-lg active:scale-95 transition">PLAY AGAIN</button>
-                    </div>
-                `;
-            }
-
-            nextDir();
-            currentGameInterval = setInterval(() => {
-                if (isOver) return;
-                timeLeft -= 0.05;
-                if (timeLeft <= 0) {
-                    gameOver("Time ran out!");
-                    return;
-                }
-                document.getElementById('sd-time').textContent = timeLeft.toFixed(2) + 's';
-                document.getElementById('sd-timer').style.width = (timeLeft / 3.5 * 100) + '%';
-            }, 50);
-        }
-
-        // ==========================================
-        // 7. COIN DROP CATCHER
-        // ==========================================
-        function initCoinDrop(container) {
-            container.innerHTML = `
-                <div class="flex flex-col h-full space-y-3">
-                    <div class="flex justify-between items-center bg-cardBg p-3 rounded-2xl border border-slate-800">
-                        <div><div class="text-[10px] font-bold text-slate-400">SCORE</div><div id="cd-score" class="text-xl font-black text-yellow-400">0</div></div>
-                        <div class="text-right"><div class="text-[10px] font-bold text-slate-400">BEST</div><div class="text-xl font-black text-slate-200">${getHighScore('coindrop')}</div></div>
-                    </div>
-                    <div class="relative w-full aspect-[3/4] bg-slate-950 rounded-3xl border border-slate-800 overflow-hidden touch-none" id="cd-area">
-                        <canvas id="cd-canvas" class="w-full h-full block"></canvas>
-                    </div>
-                    <p class="text-center text-xs text-slate-400">Slide left/right to catch coins & dodge spikes!</p>
-                </div>
-            `;
-
-            const canvas = document.getElementById('cd-canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = 350; canvas.height = 450;
-
-            let score = 0, isOver = false;
-            let basket = { x: 140, y: 400, w: 70, h: 20 };
-            let items = [];
-
-            const area = document.getElementById('cd-area');
-            area.addEventListener('touchmove', (e) => {
-                const rect = canvas.getBoundingClientRect();
-                const touchX = e.touches[0].clientX - rect.left;
-                basket.x = Math.max(0, Math.min(canvas.width - basket.w, touchX - basket.w/2));
-            });
-            area.addEventListener('mousemove', (e) => {
-                const rect = canvas.getBoundingClientRect();
-                const mouseX = e.clientX - rect.left;
-                basket.x = Math.max(0, Math.min(canvas.width - basket.w, mouseX - basket.w/2));
-            });
-
-            let spawnTimer = 0;
-
-            currentGameInterval = setInterval(() => {
-                if (isOver) return;
-
-                spawnTimer++;
-                if (spawnTimer > 35) {
-                    spawnTimer = 0;
-                    items.push({
-                        x: Math.random() * (canvas.width - 20),
-                        y: -20,
-                        vy: Math.random() * 2 + 3,
-                        isSpike: Math.random() > 0.75,
-                        radius: 12
-                    });
-                }
-
-                // Update items
-                for (let i = items.length - 1; i >= 0; i--) {
-                    items[i].y += items[i].vy;
-
-                    // Check collision with basket
-                    if (items[i].y + items[i].radius >= basket.y && 
-                        items[i].x >= basket.x - 10 && 
-                        items[i].x <= basket.x + basket.w + 10) {
-                        
-                        if (items[i].isSpike) {
-                            isOver = true;
-                            clearActiveGame();
-                            AudioFX.play('error');
-                            vibrate(100);
-                            const isNew = setHighScore('coindrop', score);
-                            container.innerHTML = `
-                                <div class="my-auto text-center space-y-4 bg-cardBg p-6 rounded-3xl border border-slate-800 shadow-xl">
-                                    <div class="text-4xl">🪙</div>
-                                    <h2 class="text-xl font-extrabold text-white">GAME OVER</h2>
-                                    <p class="text-xs text-slate-400">You caught a red spike!</p>
-                                    <div class="bg-slate-900/60 p-3 rounded-2xl"><div class="text-xs text-slate-500">Score</div><div class="text-2xl font-black text-yellow-400">${score}</div></div>
-                                    ${isNew ? '<div class="text-xs font-bold text-amber-400 animate-pulse">🎉 NEW PERSONAL BEST!</div>' : ''}
-                                    <button onclick="launchGame('coindrop')" class="w-full py-3 bg-gradient-to-r from-yellow-500 to-amber-600 text-white font-bold rounded-2xl shadow-lg active:scale-95 transition">PLAY AGAIN</button>
-                                </div>
-                            `;
-                            return;
-                        } else {
-                            score++;
-                            document.getElementById('cd-score').textContent = score;
-                            AudioFX.play('score');
-                            vibrate(30);
-                            items.splice(i, 1);
-                            continue;
-                        }
-                    }
-
-                    // Remove out of bounds
-                    if (items[i] && items[i].y > canvas.height) {
-                        items.splice(i, 1);
-                    }
-                }
-
-                // Render Canvas
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                // Draw Items
-                items.forEach(it => {
-                    ctx.beginPath();
-                    ctx.arc(it.x, it.y, it.radius, 0, Math.PI*2);
-                    ctx.fillStyle = it.isSpike ? '#ef4444' : '#eab308';
-                    ctx.shadowColor = it.isSpike ? '#ef4444' : '#eab308';
-                    ctx.shadowBlur = 10;
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
-                });
-
-                // Draw Basket
-                ctx.fillStyle = '#f59e0b';
-                ctx.shadowColor = '#f59e0b'; ctx.shadowBlur = 12;
-                ctx.fillRect(basket.x, basket.y, basket.w, basket.h);
-                ctx.shadowBlur = 0;
-
-            }, 1000 / 60);
-        }
-
-        // ==========================================
-        // 8. WORD SCRAMBLE RUSH
-        // ==========================================
-        function initWordRush(container) {
-            const WORDS = ['NEON', 'ARCADE', 'MOBILE', 'PLAYER', 'CYBER', 'SPEED', 'GHOST', 'REFLEX', 'PUZZLE', 'BLITZ'];
-
-            container.innerHTML = `
-                <div class="flex flex-col h-full space-y-4">
-                    <div class="flex justify-between items-center bg-cardBg p-3 rounded-2xl border border-slate-800">
-                        <div><div class="text-[10px] font-bold text-slate-400">SCORE</div><div id="wr-score" class="text-xl font-black text-purple-400">0</div></div>
-                        <div class="text-right"><div class="text-[10px] font-bold text-slate-400">BEST</div><div class="text-xl font-black text-slate-200">${getHighScore('wordrush')}</div></div>
-                    </div>
-                    <div class="space-y-1">
-                        <div class="flex justify-between text-xs font-semibold text-slate-300"><span>TIME</span><span id="wr-time">5.00s</span></div>
-                        <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden"><div id="wr-timer" class="bg-gradient-to-r from-purple-500 to-pink-400 h-full w-full"></div></div>
-                    </div>
-                    <div class="my-auto bg-cardBg p-8 rounded-3xl border border-slate-800 text-center space-y-6 shadow-xl">
-                        <div class="text-xs uppercase tracking-wider text-slate-400">Unscramble the word</div>
-                        <div id="wr-scrambled" class="text-4xl font-black tracking-widest text-purple-400">OENB</div>
-                        <input type="text" id="wr-input" placeholder="Type answer..." class="w-full bg-slate-900 border border-slate-700 rounded-2xl py-3 text-center text-white font-bold outline-none focus:border-purple-500 uppercase">
-                        <button onclick="submitWord()" class="w-full py-3 bg-purple-600 hover:bg-purple-500 rounded-2xl font-extrabold text-white shadow-lg active:scale-95 transition">SUBMIT</button>
-                    </div>
-                </div>
-            `;
-
-            let score = 0, currentWord = '', timeLeft = 5.0, isOver = false;
-
-            function nextWord() {
-                if (isOver) return;
-                currentWord = WORDS[Math.floor(Math.random() * WORDS.length)];
-                let scrambled = currentWord.split('').sort(() => Math.random() - 0.5).join('');
-                if (scrambled === currentWord) scrambled = currentWord.split('').reverse().join('');
-                document.getElementById('wr-scrambled').textContent = scrambled;
-                document.getElementById('wr-input').value = '';
-                timeLeft = Math.max(2.5, 5.0 - (score * 0.1));
-            }
-
-            window.submitWord = function() {
-                if (isOver) return;
-                const val = document.getElementById('wr-input').value.trim().toUpperCase();
-                if (val === currentWord) {
-                    AudioFX.play('score');
-                    vibrate(30);
-                    score++;
-                    document.getElementById('wr-score').textContent = score;
-                    nextWord();
-                } else {
-                    AudioFX.play('error');
-                    vibrate(50);
-                    document.getElementById('wr-input').classList.add('border-red-500');
-                    setTimeout(() => document.getElementById('wr-input').classList.remove('border-red-500'), 400);
-                }
-            };
-
-            function gameOver(reason) {
-                isOver = window.isGameOver = true;
-                clearActiveGame();
-                AudioFX.play('error');
-                vibrate(100);
-                const isNew = setHighScore('wordrush', score);
-                container.innerHTML = `
-                    <div class="my-auto text-center space-y-4 bg-cardBg p-6 rounded-3xl border border-slate-800 shadow-xl">
-                        <div class="text-4xl">🔤</div>
-                        <h2 class="text-xl font-extrabold text-white">GAME OVER</h2>
-                        <p class="text-xs text-slate-400">${reason}</p>
-                        <div class="bg-slate-900/60 p-3 rounded-2xl"><div class="text-xs text-slate-500">Score</div><div class="text-2xl font-black text-purple-400">${score}</div></div>
-                        ${isNew ? '<div class="text-xs font-bold text-amber-400 animate-pulse">🎉 NEW PERSONAL BEST!</div>' : ''}
-                        <button onclick="launchGame('wordrush')" class="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold rounded-2xl shadow-lg active:scale-95 transition">PLAY AGAIN</button>
-                    </div>
-                `;
-            }
-
-            nextWord();
-            currentGameInterval = setInterval(() => {
-                if (isOver) return;
-                timeLeft -= 0.05;
-                if (timeLeft <= 0) {
-                    gameOver("Time ran out!");
-                    return;
-                }
-                document.getElementById('wr-time').textContent = timeLeft.toFixed(2) + 's';
-                document.getElementById('wr-timer').style.width = (timeLeft / 5.0 * 100) + '%';
-            }, 50);
-        }
-
-        // ==========================================
-        // 9. TAP THE BEAT RHYTHM
-        // ==========================================
-        function initRhythm(container) {
-            container.innerHTML = `
-                <div class="flex flex-col h-full space-y-4">
-                    <div class="flex justify-between items-center bg-cardBg p-3 rounded-2xl border border-slate-800">
-                        <div><div class="text-[10px] font-bold text-slate-400">SCORE</div><div id="r-score" class="text-xl font-black text-rose-400">0</div></div>
-                        <div class="text-right"><div class="text-[10px] font-bold text-slate-400">BEST</div><div class="text-xl font-black text-slate-200">${getHighScore('rhythm')}</div></div>
-                    </div>
-                    <div class="my-auto bg-cardBg p-8 rounded-3xl border border-slate-800 text-center space-y-6 shadow-xl relative overflow-hidden">
-                        <div class="text-xs uppercase tracking-wider text-slate-400">Tap when pulse is centered</div>
-                        <div class="w-24 h-24 mx-auto rounded-full bg-rose-500/20 border-2 border-rose-500 flex items-center justify-center relative">
-                            <div id="r-pulse" class="w-12 h-12 rounded-full bg-rose-500 animate-ping absolute"></div>
-                            <div class="w-8 h-8 rounded-full bg-rose-600 relative z-10"></div>
-                        </div>
-                    </div>
-                    <button onclick="handleBeatTap()" class="w-full py-5 bg-gradient-to-r from-rose-500 to-red-600 rounded-2xl font-extrabold text-white text-lg shadow-lg active:scale-95 transition">TAP BEAT</button>
-                </div>
-            `;
-
-            let score = 0, beatPhase = 0, isOver = false;
-
-            window.handleBeatTap = function() {
-                if (isOver) return;
-                // Check if pulse is in optimal window (approx phase 0.7 to 1.0)
-                if (beatPhase > 0.65 && beatPhase < 1.05) {
-                    AudioFX.play('score');
-                    vibrate(30);
-                    score++;
-                    document.getElementById('r-score').textContent = score;
-                } else {
-                    gameOver("Missed the beat!");
-                }
-            };
-
-            function gameOver(reason) {
-                isOver = window.isGameOver = true;
-                clearActiveGame();
-                AudioFX.play('error');
-                vibrate(100);
-                const isNew = setHighScore('rhythm', score);
-                container.innerHTML = `
-                    <div class="my-auto text-center space-y-4 bg-cardBg p-6 rounded-3xl border border-slate-800 shadow-xl">
-                        <div class="text-4xl">🎵</div>
-                        <h2 class="text-xl font-extrabold text-white">GAME OVER</h2>
-                        <p class="text-xs text-slate-400">${reason}</p>
-                        <div class="bg-slate-900/60 p-3 rounded-2xl"><div class="text-xs text-slate-500">Score</div><div class="text-2xl font-black text-rose-400">${score}</div></div>
-                        ${isNew ? '<div class="text-xs font-bold text-amber-400 animate-pulse">🎉 NEW PERSONAL BEST!</div>' : ''}
-                        <button onclick="launchGame('rhythm')" class="w-full py-3 bg-gradient-to-r from-rose-500 to-red-600 text-white font-bold rounded-2xl shadow-lg active:scale-95 transition">PLAY AGAIN</button>
-                    </div>
-                `;
-            }
-
-            currentGameInterval = setInterval(() => {
-                if (isOver) return;
-                beatPhase += 0.04;
-                if (beatPhase > 1.2) beatPhase = 0;
-            }, 50);
-        }
-
-        // ==========================================
-        // 10. CYBER SNAKE MINI
-        // ==========================================
-        function initSnake(container) {
-            container.innerHTML = `
-                <div class="flex flex-col h-full space-y-3">
-                    <div class="flex justify-between items-center bg-cardBg p-3 rounded-2xl border border-slate-800">
-                        <div><div class="text-[10px] font-bold text-slate-400">SCORE</div><div id="s-score" class="text-xl font-black text-emerald-400">0</div></div>
-                        <div class="text-right"><div class="text-[10px] font-bold text-slate-400">BEST</div><div class="text-xl font-black text-slate-200">${getHighScore('snake')}</div></div>
-                    </div>
-                    <div class="relative w-full aspect-square bg-slate-950 rounded-3xl border border-slate-800 overflow-hidden">
-                        <canvas id="snake-canvas" class="w-full h-full block"></canvas>
-                    </div>
-                    <div class="grid grid-cols-3 gap-2 pb-2">
-                        <div></div>
-                        <button onclick="setSnakeDir(0, -1)" class="py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-bold text-white shadow active:scale-95 transition">⬆️</button>
-                        <div></div>
-                        <button onclick="setSnakeDir(-1, 0)" class="py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-bold text-white shadow active:scale-95 transition">⬅️</button>
-                        <button onclick="setSnakeDir(0, 1)" class="py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-bold text-white shadow active:scale-95 transition">⬇️</button>
-                        <button onclick="setSnakeDir(1, 0)" class="py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-bold text-white shadow active:scale-95 transition">➡️</button>
-                    </div>
-                </div>
-            `;
-
-            const canvas = document.getElementById('snake-canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = 300; canvas.height = 300;
-            const gridSize = 15;
-            const tileCount = canvas.width / gridSize;
-
-            let score = 0, isOver = false;
-            let snake = [{ x: 10, y: 10 }, { x: 10, y: 11 }, { x: 10, y: 12 }];
-            let dx = 0, dy = -1;
-            let food = { x: 5, y: 5 };
-
-            function spawnFood() {
-                food = {
-                    x: Math.floor(Math.random() * tileCount),
-                    y: Math.floor(Math.random() * tileCount)
-                };
-            }
-
-            window.setSnakeDir = function(nx, ny) {
-                if ((nx === 1 && dx === -1) || (nx === -1 && dx === 1) || (ny === 1 && dy === -1) || (ny === -1 && dy === 1)) return;
-                dx = nx; dy = ny;
-            };
-
-            // Keyboard support
-            currentGameListener = (e) => {
-                if (e.key === 'ArrowUp') setSnakeDir(0, -1);
-                if (e.key === 'ArrowDown') setSnakeDir(0, 1);
-                if (e.key === 'ArrowLeft') setSnakeDir(-1, 0);
-                if (e.key === 'ArrowRight') setSnakeDir(1, 0);
-            };
-            window.addEventListener('keydown', currentGameListener);
-
-            spawnFood();
-
-            currentGameInterval = setInterval(() => {
-                if (isOver) return;
-
-                const head = { x: snake[0].x + dx, y: snake[0].y + dy };
-
-                // Wall collision
-                if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
-                    gameOver("Hit boundary wall!");
-                    return;
-                }
-
-                // Self collision
-                for (let i = 0; i < snake.length; i++) {
-                    if (head.x === snake[i].x && head.y === snake[i].y) {
-                        gameOver("Hit your own tail!");
-                        return;
-                    }
-                }
-
-                snake.unshift(head);
-
-                // Food check
-                if (head.x === food.x && head.y === food.y) {
-                    score++;
-                    document.getElementById('s-score').textContent = score;
-                    AudioFX.play('score');
-                    vibrate(30);
-                    spawnFood();
-                } else {
-                    snake.pop();
-                }
-
-                // Render Canvas
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                // Draw Food
-                ctx.fillStyle = '#ec4899';
-                ctx.shadowColor = '#ec4899'; ctx.shadowBlur = 10;
-                ctx.fillRect(food.x * gridSize + 1, food.y * gridSize + 1, gridSize - 2, gridSize - 2);
-                ctx.shadowBlur = 0;
-
-                // Draw Snake
-                ctx.fillStyle = '#10b981';
-                snake.forEach((s, idx) => {
-                    ctx.shadowColor = '#10b981'; ctx.shadowBlur = idx === 0 ? 10 : 0;
-                    ctx.fillRect(s.x * gridSize + 1, s.y * gridSize + 1, gridSize - 2, gridSize - 2);
-                });
-                ctx.shadowBlur = 0;
-
-            }, 120);
-
-            function gameOver(reason) {
-                isOver = window.isGameOver = true;
-                clearActiveGame();
-                AudioFX.play('error');
-                vibrate(100);
-                const isNew = setHighScore('snake', score);
-                container.innerHTML = `
-                    <div class="my-auto text-center space-y-4 bg-cardBg p-6 rounded-3xl border border-slate-800 shadow-xl">
-                        <div class="text-4xl">🐍</div>
-                        <h2 class="text-xl font-extrabold text-white">GAME OVER</h2>
-                        <p class="text-xs text-slate-400">${reason}</p>
-                        <div class="bg-slate-900/60 p-3 rounded-2xl"><div class="text-xs text-slate-500">Score</div><div class="text-2xl font-black text-emerald-400">${score}</div></div>
-                        ${isNew ? '<div class="text-xs font-bold text-amber-400 animate-pulse">🎉 NEW PERSONAL BEST!</div>' : ''}
-                        <button onclick="launchGame('snake')" class="w-full py-3 bg-gradient-to-r from-emerald-400 to-cyan-600 text-white font-bold rounded-2xl shadow-lg active:scale-95 transition">PLAY AGAIN</button>
-                    </div>
-                `;
-            }
-        }
-
-        // Initialize Main Menu on load
-        window.onload = function() {
-            renderMenu();
-        };
-    </script>
+<body>
+<main class="app">
+  <header>
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="3" y="3" width="7" height="7" rx="2"/>
+          <rect x="14" y="3" width="7" height="7" rx="2"/>
+          <rect x="3" y="14" width="7" height="7" rx="2"/>
+          <path d="M17.5 14v7M14 17.5h7"/>
+        </svg>
+      </div>
+      <div><h1>Tile Master</h1><p class="subtitle">A little arcade for quick minds</p></div>
+    </div>
+    <div class="top-actions">
+      <button id="soundToggle" class="icon-btn" aria-label="Toggle sound">♪ Sound</button>
+    </div>
+  </header>
+  <section id="app"></section>
+</main>
+
+<dialog id="endDialog">
+  <h2 id="endTitle">Game over</h2>
+  <p id="endText"></p>
+  <button id="again" class="primary">Play again</button>
+</dialog>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+const app = $("app");
+const BEST_KEY = "tile-master-arcade-best-v1";
+
+const svg = {
+  bolt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m13 2-9 12h7l-1 8 10-13h-7z"/></svg>',
+  pong: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4v16M19 4v16M12 11h.01"/></svg>',
+  color: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l8 4"/></svg>',
+  brain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4a4 4 0 0 0-7 3 4 4 0 0 0 0 7 4 4 0 0 0 7 4zm0 0a4 4 0 0 1 7 3 4 4 0 0 1 0 7 4 4 0 0 1-7 4zM12 4v16"/></svg>',
+  math: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 5h14M12 2v6M6 13l4 4m0-4-4 4m8-1h5"/></svg>',
+  arrows: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 19V5m0 0L6 11m6-6 6 6"/></svg>',
+  coin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M15 8.5c-.7-.7-1.7-1-3-1-1.7 0-3 .8-3 2s1 1.8 3 2 3 .8 3 2-1.3 2-3 2c-1.3 0-2.3-.4-3-1m3-8v11"/></svg>',
+  word: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 5h18M12 5v14M7 19h10"/></svg>',
+  rhythm: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg>',
+  snake: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h9a3 3 0 1 1-3 3v4a3 3 0 1 0 3-3h7"/><circle cx="18" cy="11" r="1"/></svg>'
+};
+
+const games = [
+  { id:"gridtap", title:"Grid Tap Blitz", desc:"Find the target before the rival.", icon:"bolt" },
+  { id:"pong", title:"Neon Pong Solo", desc:"Keep the ball in play against AI.", icon:"pong" },
+  { id:"colorswitch", title:"Color Switch", desc:"Tap the called-out color.", icon:"color" },
+  { id:"memory", title:"Simon Says", desc:"Watch and repeat the sequence.", icon:"brain" },
+  { id:"mathblitz", title:"Math Blitz", desc:"Solve quick true-or-false equations.", icon:"math" },
+  { id:"swipedodge", title:"Direction Dash", desc:"Follow the arrow before time runs out.", icon:"arrows" },
+  { id:"coindrop", title:"Coin Catch", desc:"Move your basket; avoid the spikes.", icon:"coin" },
+  { id:"wordrush", title:"Word Rush", desc:"Type the word before the rival.", icon:"word" },
+  { id:"rhythm", title:"Beat Tap", desc:"Tap in time with the moving pulse.", icon:"rhythm" },
+  { id:"snake", title:"Classic Snake", desc:"Eat, grow, and avoid your tail.", icon:"snake" }
+];
+
+let soundEnabled = true;
+let audio = null;
+let cleanupFns = [];
+let currentGame = null;
+let lastGameId = null;
+let raf = 0;
+let runNumber = 0;
+
+function readScores() {
+  try { return JSON.parse(localStorage.getItem(BEST_KEY)) || {}; }
+  catch { return {}; }
+}
+function getBest(id) {
+  const n = Number(readScores()[id] || 0);
+  return Number.isFinite(n) ? n : 0;
+}
+function setBest(id, score) {
+  const scores = readScores();
+  const old = Number(scores[id] || 0);
+  if (score > old) {
+    scores[id] = score;
+    try { localStorage.setItem(BEST_KEY, JSON.stringify(scores)); } catch {}
+    return true;
+  }
+  return false;
+}
+function trackCleanup(fn) { cleanupFns.push(fn); }
+function later(fn, ms) {
+  const id = setTimeout(fn, ms);
+  trackCleanup(() => clearTimeout(id));
+  return id;
+}
+function interval(fn, ms) {
+  const id = setInterval(fn, ms);
+  trackCleanup(() => clearInterval(id));
+  return id;
+}
+function addListener(target, event, fn, options) {
+  target.addEventListener(event, fn, options);
+  trackCleanup(() => target.removeEventListener(event, fn, options));
+}
+function clearGame() {
+  cancelAnimationFrame(raf);
+  raf = 0;
+  cleanupFns.forEach(fn => { try { fn(); } catch {} });
+  cleanupFns = [];
+  currentGame = null;
+}
+function beep(kind="tap") {
+  if (!soundEnabled) return;
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    if (!audio) audio = new AC();
+    if (audio.state === "suspended") audio.resume().catch(() => {});
+    const osc = audio.createOscillator(), gain = audio.createGain();
+    const now = audio.currentTime;
+    const settings = {
+      tap:[440,660,.07,"sine"], score:[523,784,.18,"triangle"],
+      error:[180,90,.2,"sawtooth"], win:[440,660,.3,"sine"]
+    }[kind] || [440,660,.07,"sine"];
+    osc.type = settings[3];
+    osc.frequency.setValueAtTime(settings[0], now);
+    osc.frequency.exponentialRampToValueAtTime(settings[1], now + settings[2]);
+    gain.gain.setValueAtTime(.11, now);
+    gain.gain.exponentialRampToValueAtTime(.001, now + settings[2]);
+    osc.connect(gain); gain.connect(audio.destination);
+    osc.start(now); osc.stop(now + settings[2]);
+    osc.onended = () => { osc.disconnect(); gain.disconnect(); };
+  } catch {}
+}
+function vibrate(pattern=25) {
+  try { if (navigator.vibrate) navigator.vibrate(pattern); } catch {}
+}
+function header(title, score, rival="") {
+  return `<div class="game-head">
+    <div><h2>${title}</h2><small style="color:var(--muted)">Score <b id="gameScore">${score}</b>${rival ? ` · Rival <b id="rivalScore">${rival}</b>` : ""}</small></div>
+    <button class="back" data-action="menu">← Games</button>
+  </div>`;
+}
+function renderMenu() {
+  clearGame();
+  $("endDialog").close?.();
+  lastGameId = null;
+  $("soundToggle").innerHTML = `${svg.rhythm} Sound ${soundEnabled ? "on" : "off"}`;
+  app.innerHTML = `
+    <div class="intro"><h2>Choose a game</h2><p>Ten quick challenges. Your records stay saved on this device.</p></div>
+    <div class="grid">${games.map(g => `
+      <button class="game-card" data-game="${g.id}">
+        <span class="game-icon">${svg[g.icon]}</span>
+        <span class="card-copy"><strong>${g.title}</strong><small>${g.desc}</small></span>
+        <span class="best">BEST<strong>${getBest(g.id)}</strong></span>
+      </button>`).join("")}
+    </div>`;
+}
+function endGame(message, score, id=currentGame?.id) {
+  if (!currentGame || currentGame.over) return;
+  currentGame.over = true;
+  const thisRun = runNumber;
+  const isNew = setBest(id, score);
+  beep("error"); vibrate([70,35,90]);
+  $("endTitle").textContent = isNew ? "New personal best" : "Run complete";
+  $("endText").textContent = `${message} Final score: ${score}. Best: ${getBest(id)}.`;
+  $("endDialog").showModal();
+  $("again").onclick = () => {
+    $("endDialog").close();
+    if (thisRun === runNumber && lastGameId) launch(lastGameId);
+  };
+}
+function startGame(id, title, score=0) {
+  clearGame();
+  runNumber++;
+  lastGameId = id;
+  currentGame = { id, score, over:false };
+  $("endDialog").close?.();
+  return currentGame;
+}
+function launch(id) {
+  const g = games.find(x => x.id === id);
+  if (!g) return;
+  const c = startGame(id, g.title);
+  switch(id) {
+    case "gridtap": gridTap(c); break;
+    case "pong": pong(c); break;
+    case "colorswitch": colorSwitch(c); break;
+    case "memory": memory(c); break;
+    case "mathblitz": mathBlitz(c); break;
+    case "swipedodge": directionDash(c); break;
+    case "coindrop": coinCatch(c); break;
+    case "wordrush": wordRush(c); break;
+    case "rhythm": beatTap(c); break;
+    case "snake": snake(c); break;
+  }
+}
+document.addEventListener("click", e => {
+  const game = e.target.closest("[data-game]");
+  if (game) launch(game.dataset.game);
+  if (e.target.closest('[data-action="menu"]')) renderMenu();
+});
+$("soundToggle").addEventListener("click", () => {
+  soundEnabled = !soundEnabled;
+  if (soundEnabled) beep("tap");
+  renderMenu();
+});
+
+// 1. GRID TAP BLITZ — AI interval tightens as score rises.
+function gridTap(c) {
+  const count=9, start=performance.now();
+  let target=-1, time=5, ai=0, aiProgress=0, prev=0;
+  const intervalFor=()=>Math.max(.23,.56-c.score*.0035);
+  app.innerHTML=`<div class="game-screen">${header("Grid Tap Blitz",0,0)}
+    <div class="progress-label"><span>Time · +0.35s per hit</span><b id="timeText">5.00</b></div>
+    <div class="progress"><div id="timeBar" class="fill"></div></div>
+    <div class="progress-label"><span>AI progress · ${intervalFor().toFixed(2)}s / tile</span></div>
+    <div class="progress"><div id="aiBar" class="fill"></div></div>
+    <div class="prompt"><div><strong>Tap the ◆ target</strong><small>Wrong tile ends the run</small></div></div>
+    <div class="tiles" id="tapTiles"></div><p id="note" class="note"></p></div>`;
+  const board=$("tapTiles");
+  for(let i=0;i<count;i++){
+    const b=document.createElement("button"); b.className="tile"; b.textContent=""; b.dataset.i=i;
+    board.appendChild(b);
+  }
+  function round() {
+    const bs=[...board.children];
+    bs.forEach((b,i)=>{b.className="tile";b.textContent="";});
+    target=Math.floor(Math.random()*count);
+    bs[target].classList.add("target"); bs[target].textContent="◆";
+  }
+  board.addEventListener("click",e=>{
+    const b=e.target.closest(".tile"); if(!b||c.over)return;
+    if(Number(b.dataset.i)!==target){b.classList.add("wrong");endGame("Wrong tile.",c.score);return;}
+    c.score++; $("gameScore").textContent=c.score; time=Math.min(8,time+.35);
+    beep("score"); vibrate(20); round();
+  });
+  round();
+  function frame(now){
+    if(c.over)return;
+    const dt=Math.min(.05,(now-prev)/1000||0); prev=now;
+    time-=dt; aiProgress+=dt/intervalFor();
+    if(aiProgress>=1){const n=Math.floor(aiProgress);ai+=n;aiProgress-=n;$("rivalScore").textContent=ai;}
+    $("timeText").textContent=Math.max(0,time).toFixed(2);
+    $("timeBar").style.transform=`scaleX(${Math.max(0,time/8)})`;
+    $("aiBar").style.transform=`scaleX(${aiProgress)})`;
+    if(time<=0){endGame(`AI scored ${ai}.`,c.score);return;}
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
+
+// 2. PONG — simple canvas rally against reactive AI.
+function pong(c) {
+  app.innerHTML=`<div class="game-screen">${header("Neon Pong Solo",0,0)}
+    <p class="note">Drag or move your finger on the court to control your paddle.</p>
+    <div class="canvas-wrap"><canvas id="pongCanvas" width="360" height="500"></canvas></div>
+    <div class="controls"><button class="direction" data-move="-1">◀</button><button class="direction" data-move="1">▶</button></div>
+    <p class="note">First to 5 points wins.</p></div>`;
+  const cv=$("pongCanvas"),ctx=cv.getContext("2d");
+  let py=220, ay=220, x=180,y=250,vx=3,vy=2.3, playerScore=0, aiScore=0, held=0;
+  function draw(){
+    if(c.over)return;
+    const w=cv.width,h=cv.height;
+    ctx.clearRect(0,0,w,h);ctx.fillStyle="#f7f7f5";ctx.fillRect(0,0,w,h);
+    ctx.setLineDash([6,8]);ctx.strokeStyle="#d9ddd7";ctx.beginPath();ctx.moveTo(w/2,0);ctx.lineTo(w/2,h);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle="#506b59";ctx.fillRect(12,py,9,68);ctx.fillRect(w-21,ay,9,68);
+    ctx.beginPath();ctx.arc(x,y,8,0,Math.PI*2);ctx.fill();
+    py=clamp(py+held*5,0,h-68);
+    const react=clamp((c.score+1)*.09,.25,.88);
+    ay+=(y-34-ay)*react;
+    x+=vx;y+=vy;
+    if(y<8||y>h-8)vy*=-1;
+    if(x<28&&y>py-5&&y<py+73){vx=Math.abs(vx)*1.04;vy+=(y-(py+34))*.055;}
+    if(x>w-28&&y>ay-5&&y<ay+73)vx=-Math.abs(vx)*1.04;
+    if(x<0){aiScore++;$("rivalScore").textContent=aiScore;reset();}
+    if(x>w){playerScore++;c.score=playerScore;$("gameScore").textContent=playerScore;beep("score");reset();}
+    if(playerScore>=5||aiScore>=5){endGame(playerScore>aiScore?"You won the rally.":"The AI won the rally.",playerScore);return;}
+    raf=requestAnimationFrame(draw);
+  }
+  function reset(){x=180;y=250;vx=(Math.random()<.5?1:-1)*3;vy=(Math.random()-.5)*4;}
+  cv.addEventListener("pointermove",e=>{if(e.buttons||e.pointerType==="touch"){const r=cv.getBoundingClientRect();py=(e.clientY-r.top)*cv.height/r.height-34;}});
+  document.querySelectorAll("[data-move]").forEach(b=>{
+    b.addEventListener("pointerdown",()=>held=Number(b.dataset.move));
+    b.addEventListener("pointerup",()=>held=0);
+    b.addEventListener("pointercancel",()=>held=0);
+  });
+  raf=requestAnimationFrame(draw);
+}
+
+// 3. COLOR SWITCH — identify requested color.
+function colorSwitch(c) {
+  const colors=[["Coral","#cf6c61"],["Sage","#64826d"],["Blue","#6684a8"],["Gold","#c39c50"]];
+  let target;
+  app.innerHTML=`<div class="game-screen">${header("Color Switch",0,"")}
+    <div class="prompt"><div><strong id="colorPrompt"></strong><small>Tap the matching color</small></div></div>
+    <div class="tiles" id="colorTiles"></div><p class="note" id="note">Build a streak. Each round gets faster.</p></div>`;
+  const board=$("colorTiles");
+  function round(){
+    board.replaceChildren();
+    target=Math.floor(Math.random()*colors.length);
+    $("colorPrompt").textContent=`Find ${colors[target][0]}`;
+    let opts=Array.from({length:9},()=>Math.floor(Math.random()*colors.length));
+    opts[Math.floor(Math.random()*9)]=target;
+    opts.forEach((n,i)=>{
+      const b=document.createElement("button");b.className="tile";b.dataset.color=n;
+      b.style.background=colors[n][1];b.setAttribute("aria-label",colors[n][0]);
+      board.appendChild(b);
+    });
+  }
+  board.addEventListener("click",e=>{
+    const b=e.target.closest("button");if(!b||c.over)return;
+    if(Number(b.dataset.color)!==target){b.classList.add("wrong");endGame("Incorrect color.",c.score);return;}
+    c.score++;$("gameScore").textContent=c.score;beep("score");vibrate(18);round();
+  });
+  round();
+}
+
+// 4. SIMON SAYS — increasingly long memory sequence.
+function memory(c) {
+  let seq=[],input=0,locked=true,roundNo=1;
+  app.innerHTML=`<div class="game-screen">${header("Simon Says",0,"")}
+    <div class="prompt"><div><strong id="memPrompt">Watch the sequence</strong><small>Repeat the lights in order</small></div></div>
+    <div class="pad-grid" id="pads">${[0,1,2,3].map(i=>`<button class="pad" data-pad="${i}" style="background:${["#dcebe0","#e9e3f1","#f2e4df","#e5eaf1"][i]}">${["●","◆","■","▲"][i]}</button>`).join("")}</div>
+    <p class="note" id="note"></p></div>`;
+  const pads=[...document.querySelectorAll(".pad")];
+  function flash(i){pads[i].classList.add("active");beep("tap");later(()=>pads[i]?.classList.remove("active"),260);}
+  function show(){
+    locked=true;input=0;seq.push(Math.floor(Math.random()*4));
+    $("memPrompt").textContent=`Round ${roundNo} · Watch`;
+    seq.forEach((n,i)=>later(()=>flash(n),450+i*Math.max(280,650-roundNo*15)));
+    later(()=>{locked=false;$("memPrompt").textContent=`Round ${roundNo} · Your turn`;},450+seq.length*Math.max(280,650-roundNo*15));
+  }
+  pads.forEach(p=>p.addEventListener("click",()=>{
+    if(locked||c.over)return;
+    const n=Number(p.dataset.pad);flash(n);
+    if(n!==seq[input]){endGame("Sequence missed.",c.score);return;}
+    input++;
+    if(input===seq.length){c.score+=roundNo;$("gameScore").textContent=c.score;roundNo++;beep("score");later(show,500);}
+  }));
+  show();
+}
+
+// 5. MATH BLITZ — answer before timer; local AI scores over time.
+function mathBlitz(c) {
+  let time=20,prev=performance.now(),answer=false,ai=0,aiProg=0;
+  app.innerHTML=`<div class="game-screen">${header("Math Blitz",0,0)}
+    <div class="progress-label"><span>Time</span><b id="timeText">20</b></div><div class="progress"><div id="timeBar" class="fill"></div></div>
+    <div class="prompt"><div><strong id="equation"></strong><small>Is this equation correct?</small></div></div>
+    <div class="controls"><button class="choice" data-answer="true">True</button><button class="choice" data-answer="false">False</button></div></div>`;
+  function question(){
+    const a=rand(2,20),b=rand(2,15),op=Math.random()<.5?"+":"×";
+    answer=Math.random()<.63;
+    let result=op==="+"?a+b:a*b;
+    if(!answer)result+=Math.random()<.5?rand(1,4):-rand(1,4);
+    $("equation").textContent=`${a} ${op} ${b} = ${result}`;
+  }
+  document.querySelectorAll("[data-answer]").forEach(b=>b.addEventListener("click",()=>{
+    if(c.over)return;
+    if((b.dataset.answer==="true")!==answer){endGame("Incorrect answer.",c.score);return;}
+    c.score++;$("gameScore").textContent=c.score;beep("score");question();
+  }));
+  question();
+  function loop(now){
+    if(c.over)return;
+    const dt=Math.min(.05,(now-prev)/1000||0);prev=now;time-=dt;
+    aiProg+=dt/Math.max(.3,.85-c.score*.012);
+    if(aiProg>=1){ai++;aiProg-=1;$("rivalScore").textContent=ai;}
+    $("timeText").textContent=Math.max(0,time).toFixed(1);
+    $("timeBar").style.transform=`scaleX(${Math.max(0,time/20)})`;
+    if(time<=0){endGame(`AI scored ${ai}.`,c.score);return;}
+    raf=requestAnimationFrame(loop);
+  }
+  raf=requestAnimationFrame(loop);
+}
+
+// 6. DIRECTION DASH — follow a displayed arrow; changing direction gets faster.
+function directionDash(c) {
+  let current=0,time=15,prev=performance.now();
+  const dirs=[["↑",0,-1],["→",1,0],["↓",0,1],["←",-1,0]];
+  app.innerHTML=`<div class="game-screen">${header("Direction Dash",0,0)}
+    <div class="progress-label"><span>Time</span><b id="timeText">15</b></div><div class="progress"><div id="timeBar" class="fill"></div></div>
+    <div class="prompt"><div><strong>Tap this direction</strong><small id="dirPrompt"></small></div></div>
+    <div class="controls" id="dirButtons"></div><p class="note">The prompt gets quicker as your score rises.</p></div>`;
+  const names=["↑","→","↓","←"];
+  $("dirButtons").innerHTML=names.map((x,i)=>`<button class="direction" data-dir="${i}" style="min-width:58px;font-size:24px">${x}</button>`).join("");
+  function next(){current=Math.floor(Math.random()*4);$("dirPrompt").textContent=dirs[current][0];}
+  $("dirButtons").addEventListener("click",e=>{
+    const b=e.target.closest("[data-dir]");if(!b||c.over)return;
+    if(Number(b.dataset.dir)!==current){endGame("Wrong direction.",c.score);return;}
+    c.score++;$("gameScore").textContent=c.score;beep("score");next();
+  });
+  next();
+  function loop(now){
+    if(c.over)return;const dt=Math.min(.05,(now-prev)/1000||0);prev=now;time-=dt;
+    $("timeText").textContent=Math.max(0,time).toFixed(1);$("timeBar").style.transform=`scaleX(${Math.max(0,time/15)})`;
+    if(time<=0){endGame("Time is up.",c.score);return;}raf=requestAnimationFrame(loop);
+  } raf=requestAnimationFrame(loop);
+}
+
+// 7. COIN CATCH — drag basket left/right, catch green coins.
+function coinCatch(c) {
+  const W=360,H=500;let basket=180,objects=[],last=performance.now(),elapsed=0,spawn=0;
+  app.innerHTML=`<div class="game-screen">${header("Coin Catch",0,"")}
+    <p class="note">Drag on the playfield to move. Catch coins; avoid red hazards.</p>
+    <div class="canvas-wrap"><canvas id="catchCanvas" width="${W}" height="${H}"></canvas></div></div>`;
+  const cv=$("catchCanvas"),ctx=cv.getContext("2d");
+  function move(e){const r=cv.getBoundingClientRect();basket=clamp((e.clientX-r.left)*W/r.width,22,W-22);}
+  cv.addEventListener("pointerdown",e=>{cv.setPointerCapture(e.pointerId);move(e);});
+  cv.addEventListener("pointermove",e=>{if(e.buttons||e.pointerType==="touch")move(e);});
+  function loop(now){
+    if(c.over)return;const dt=Math.min(.05,(now-last)/1000||0);last=now;elapsed+=dt;spawn+=dt;
+    if(spawn>.6){spawn=0;objects.push({x:rand(14,W-14),y:-10,hazard:Math.random()<.22,speed:150+Math.min(170,c.score*4)});}
+    ctx.clearRect(0,0,W,H);
+    objects.forEach(o=>{o.y+=o.speed*dt;ctx.fillStyle=o.hazard?"#c45353":"#c39c50";ctx.beginPath();ctx.arc(o.x,o.y,10,0,Math.PI*2);ctx.fill();});
+    ctx.fillStyle="#506b59";ctx.fillRect(basket-28,H-37,56,12);
+    for(let i=objects.length-1;i>=0;i--){
+      const o=objects[i];
+      if(o.y>H-55&&Math.abs(o.x-basket)<37){
+        if(o.hazard){endGame("Caught a hazard.",c.score);return;}
+        c.score++;$("gameScore").textContent=c.score;beep("score");objects.splice(i,1);
+      } else if(o.y>H+10)objects.splice(i,1);
+    }
+    if(elapsed>=30){endGame("Round complete.",c.score);return;}
+    raf=requestAnimationFrame(loop);
+  } raf=requestAnimationFrame(loop);
+}
+
+// 8. WORD RUSH — type each prompt; rival speed improves as your score rises.
+function wordRush(c) {
+  const words=["MINT","CLOUD","BRISK","PLANT","STONE","RIVER","LIGHT","QUICK","EMBER","NORTH"];
+  let time=20,prev=performance.now(),ai=0,aiProg=0;
+  app.innerHTML=`<div class="game-screen">${header("Word Rush",0,0)}
+    <div class="progress-label"><span>Time</span><b id="timeText">20</b></div><div class="progress"><div id="timeBar" class="fill"></div></div>
+    <div class="prompt"><div><strong id="word"></strong><small>Type the word exactly</small></div></div>
+    <input id="wordInput" class="type-input" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Type the displayed word">
+    <p class="note">Rival points: <b id="rivalScore">0</b></p></div>`;
+  function next(){ $("word").textContent=words[Math.floor(Math.random()*words.length)];const input=$("wordInput");input.value="";input.focus();}
+  $("wordInput").addEventListener("input",()=>{
+    const input=$("wordInput");
+    if(input.value.trim().toUpperCase()===$("word").textContent){
+      c.score++;$("gameScore").textContent=c.score;beep("score");next();
+    }
+  });
+  next();
+  function loop(now){
+    if(c.over)return;const dt=Math.min(.05,(now-prev)/1000||0);prev=now;time-=dt;
+    aiProg+=dt/Math.max(.55,1.5-c.score*.025);
+    if(aiProg>=1){ai++;aiProg-=1;$("rivalScore").textContent=ai;}
+    $("timeText").textContent=Math.max(0,time).toFixed(1);$("timeBar").style.transform=`scaleX(${Math.max(0,time/20)})`;
+    if(time<=0){endGame(`Rival typed ${ai} words.`,c.score);return;}raf=requestAnimationFrame(loop);
+  } raf=requestAnimationFrame(loop);
+}
+
+// 9. BEAT TAP — timing window tightens as the score rises.
+function beatTap(c) {
+  let phase=0,dir=1,last=performance.now(),duration=1.3;
+  app.innerHTML=`<div class="game-screen">${header("Beat Tap",0,"")}
+    <div class="prompt"><div><strong>Tap when the pulse is centered</strong><small>Miss three beats and the run ends</small></div></div>
+    <div class="canvas-wrap"><canvas id="beatCanvas" width="360" height="150"></canvas></div>
+    <div class="controls"><button id="beatButton" class="choice">TAP BEAT</button></div>
+    <p id="note" class="note">Misses: 0 / 3</p></div>`;
+  let misses=0;
+  $("beatButton").addEventListener("click",()=>{
+    if(c.over)return;
+    const distance=Math.abs(phase-.5);
+    if(distance<Math.max(.045,.16-c.score*.003)){
+      c.score++;$("gameScore").textContent=c.score;beep("score");vibrate(25);
+    } else {
+      misses++;$("note").textContent=`Misses: ${misses} / 3`;beep("error");
+      if(misses>=3)endGame("Missed too many beats.",c.score);
+    }
+  });
+  const cv=$("beatCanvas"),ctx=cv.getContext("2d");
+  function loop(now){
+    if(c.over)return;const dt=Math.min(.05,(now-last)/1000||0);last=now;
+    duration=Math.max(.55,1.3-c.score*.025);
+    phase+=dir*dt/duration;if(phase>=1){phase=1;dir=-1;}if(phase<=0){phase=0;dir=1;}
+    ctx.clearRect(0,0,360,150);ctx.strokeStyle="#e3e5df";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(24,75);ctx.lineTo(336,75);ctx.stroke();
+    ctx.fillStyle="#e9f0ea";ctx.fillRect(180-18,42,36,66);
+    ctx.fillStyle="#506b59";ctx.beginPath();ctx.arc(24+312*phase,75,13,0,Math.PI*2);ctx.fill();
+    raf=requestAnimationFrame(loop);
+  } raf=requestAnimationFrame(loop);
+}
+
+// 10. SNAKE — keyboard arrows and on-screen direction controls.
+function snake(c) {
+  const N=18;let body=[{x:8,y:10},{x:7,y:10},{x:6,y:10}],dir={x:1,y:0},queued={x:1,y:0};
+  let food={x:13,y:9},last=performance.now(),acc=0;
+  app.innerHTML=`<div class="game-screen">${header("Classic Snake",0,"")}
+    <p class="note">Use the arrow buttons or keyboard arrow keys.</p>
+    <div class="canvas-wrap"><canvas id="snakeCanvas" width="360" height="360"></canvas></div>
+    <div class="controls">
+      <button class="direction" data-dir="up">↑</button>
+      <button class="direction" data-dir="left">←</button>
+      <button class="direction" data-dir="down">↓</button>
+      <button class="direction" data-dir="right">→</button>
+    </div></div>`;
+  const cv=$("snakeCanvas"),ctx=cv.getContext("2d");
+  function setDir(x,y){if(x===-dir.x&&y===-dir.y)return;queued={x,y};}
+  const key=e=>{const map={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]};if(map[e.key]){e.preventDefault();setDir(...map[e.key]);}};
+  addListener(window,"keydown",key);
+  document.querySelectorAll("[data-dir]").forEach(b=>b.addEventListener("click",()=>{
+    const d=b.dataset.dir;setDir(d==="left"?-1:d==="right"?1:0,d==="up"?-1:d==="down"?1:0);
+  }));
+  function spawnFood(){
+    do{food={x:rand(0,N-1),y:rand(0,N-1)}}while(body.some(p=>p.x===food.x&&p.y===food.y));
+  }
+  function loop(now){
+    if(c.over)return;const dt=Math.min(.05,(now-last)/1000||0);last=now;acc+=dt;
+    const step=Math.max(.075,.15-c.score*.002);
+    while(acc>=step){
+      acc-=step;dir=queued;
+      const head={x:body[0].x+dir.x,y:body[0].y+dir.y};
+      if(head.x<0||head.x>=N||head.y<0||head.y>=N||body.some(p=>p.x===head.x&&p.y===head.y)){
+        endGame("Snake crashed.",c.score);return;
+      }
+      body.unshift(head);
+      if(head.x===food.x&&head.y===food.y){c.score++;$("gameScore").textContent=c.score;beep("score");spawnFood();}
+      else body.pop();
+    }
+    const cell=360/N;ctx.clearRect(0,0,360,360);ctx.fillStyle="#c39c50";ctx.fillRect(food.x*cell+3,food.y*cell+3,cell-6,cell-6);
+    body.forEach((p,i)=>{ctx.fillStyle=i===0?"#506b59":"#9aaf9d";ctx.fillRect(p.x*cell+2,p.y*cell+2,cell-4,cell-4);});
+    raf=requestAnimationFrame(loop);
+  } raf=requestAnimationFrame(loop);
+}
+
+function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+function clamp(n,min,max){return Math.max(min,Math.min(max,n));}
+
+renderMenu();
+</script>
 </body>
 </html>
-```
