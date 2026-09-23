@@ -1,0 +1,179 @@
+/* Tile Master shared motion and visual polish */
+
+:root {
+  --motion-accent: #506b59;
+  --motion-accent-soft: #e9f0ea;
+}
+
+/* New screens and menu cards enter smoothly. */
+#app > * {
+  animation: screen-enter 320ms cubic-bezier(.2,.75,.25,1) both;
+}
+
+.game-card {
+  animation: card-enter 350ms cubic-bezier(.2,.75,.25,1) both;
+  transition: transform 160ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.game-card:nth-child(2n) { animation-delay: 35ms; }
+.game-card:nth-child(3n) { animation-delay: 70ms; }
+.game-card:nth-child(4n) { animation-delay: 105ms; }
+
+.game-card:hover {
+  transform: translateY(-2px);
+  border-color: #c9d5cb;
+  box-shadow: 0 7px 18px #2028200c;
+}
+
+/* Touch feedback shared by tiles, memory pads, and action buttons. */
+.tile, .pad, .choice, .direction, .icon-btn, .back, .primary {
+  transition:
+    transform 110ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.tile:active, .pad:active, .choice:active, .direction:active,
+.icon-btn:active, .back:active, .primary:active {
+  transform: scale(.94);
+}
+
+.tile.target {
+  animation: target-breathe 1.25s ease-in-out infinite;
+}
+
+.tile.lit, .pad.active {
+  animation: tile-flash 220ms ease-out;
+}
+
+.tile.wrong {
+  animation: wrong-shake 280ms ease-out;
+}
+
+/* Score changes get a small pop; JS adds .score-pop. */
+.score-pop {
+  animation: score-pop 300ms cubic-bezier(.2,.9,.3,1.3);
+}
+
+/* Canvas games get a quiet frame treatment without altering canvas drawing. */
+.canvas-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  animation: canvas-enter 360ms ease-out both;
+}
+
+.canvas-wrap canvas {
+  transition: filter 180ms ease;
+}
+
+.canvas-wrap:focus-within canvas {
+  filter: saturate(1.08);
+}
+
+/* New game view header and prompt arrive with a subtle lift. */
+.game-head {
+  animation: content-enter 300ms ease-out both;
+}
+
+.prompt {
+  animation: content-enter 380ms ease-out both;
+}
+
+/* Splash screen polish. */
+.splash-logo {
+  animation: logo-float 2.4s ease-in-out infinite;
+}
+
+.splash-title {
+  animation: title-enter 650ms cubic-bezier(.2,.75,.25,1) both;
+}
+
+#startButton {
+  transition: transform 130ms ease, filter 130ms ease;
+}
+
+#startButton:hover { filter: brightness(1.05); }
+#startButton:active { transform: scale(.97); }
+
+/* End dialog enters cleanly. */
+dialog[open] {
+  animation: dialog-enter 220ms cubic-bezier(.2,.75,.25,1) both;
+}
+
+/* Brief status flash used when the score changes. */
+#app.score-flash {
+  animation: score-flash 230ms ease-out;
+}
+
+@keyframes screen-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes card-enter {
+  from { opacity: 0; transform: translateY(9px) scale(.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes content-enter {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes canvas-enter {
+  from { opacity: .65; transform: scale(.985); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes target-breathe {
+  0%, 100% { box-shadow: 0 0 0 0 #506b5920; }
+  50% { box-shadow: 0 0 0 5px #506b5910; }
+}
+
+@keyframes tile-flash {
+  0% { transform: scale(.9); }
+  65% { transform: scale(1.035); }
+  100% { transform: scale(1); }
+}
+
+@keyframes wrong-shake {
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes score-pop {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.22); }
+  100% { transform: scale(1); }
+}
+
+@keyframes score-flash {
+  50% { filter: brightness(1.035); }
+}
+
+@keyframes logo-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes title-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dialog-enter {
+  from { opacity: 0; transform: translateY(8px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
