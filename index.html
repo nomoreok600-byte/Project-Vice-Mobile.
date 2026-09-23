@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#18232e">
+  <title>Project Vice: Mobile</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #18232e;
+      color: white;
+      font-family: system-ui, sans-serif;
+      overscroll-behavior: none;
+    }
+
+    #game, #lookZone, #moveZone {
+      position: fixed;
+      touch-action: none;
+      user-select: none;
+    }
+
+    #game {
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    #moveZone {
+      left: 0;
+      top: 30%;
+      bottom: 0;
+      width: 44%;
+      z-index: 2;
+    }
+
+    #lookZone {
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 56%;
+      z-index: 2;
+    }
+
+    #stick {
+      position: fixed;
+      left: 28px;
+      bottom: max(28px, env(safe-area-inset-bottom));
+      width: 124px;
+      height: 124px;
+      border: 2px solid #ffffff65;
+      border-radius: 50%;
+      background: #ffffff15;
+      pointer-events: none;
+    }
+
+    #knob {
+      position: absolute;
+      left: 40px;
+      top: 40px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #d9eaffaa;
+      border: 2px solid white;
+    }
+
+    #sprintHint {
+      position: absolute;
+      top: -27px;
+      width: 100%;
+      text-align: center;
+      font-size: 12px;
+      color: #b9ffb2;
+    }
+
+    #crosshair {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      width: 24px;
+      height: 24px;
+      transform: translate(-50%, -50%);
+      z-index: 4;
+      pointer-events: none;
+      color: white;
+      filter: drop-shadow(0 1px 2px black);
+    }
+
+    #crosshair::before, #crosshair::after {
+      content: "";
+      position: absolute;
+      background: currentColor;
+    }
+
+    #crosshair::before {
+      left: 11px;
+      top: 0;
+      width: 2px;
+      height: 24px;
+    }
+
+    #crosshair::after {
+      left: 0;
+      top: 11px;
+      height: 2px;
+      width: 24px;
+    }
+
+    #crosshair.hit { color: #ffce54; }
+
+    #hud, #message {
+      position: fixed;
+      z-index: 5;
+      pointer-events: none;
+      text-shadow: 0 2px 4px black;
+    }
+
+    #hud {
+      top: max(12px, env(safe-area-inset-top));
+      left: max(14px, env(safe-area-inset-left));
+      padding: 9px 13px;
+      border-radius: 12px;
+      background: #10182080;
+      font-size: 14px;
+    }
+
+    #message {
+      top: 18%;
+      left: 10%;
+      width: 80%;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    #actions {
+      position: fixed;
+      right: max(14px, env(safe-area-inset-right));
+      bottom: max(20px, env(safe-area-inset-bottom));
+      z-index: 6;
+      display: grid;
+      grid-template-columns: repeat(3, 62px);
+      gap: 10px;
+    }
+
+    .action {
+      appearance: none;
+      width: 62px;
+      height: 62px;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 2px;
+      border: 2px solid #ffffff70;
+      border-radius: 50%;
+      background: #16233188;
+      color: white;
+      touch-action: none;
+      user-select: none;
+    }
+
+    .action svg {
+      width: 25px;
+      height: 25px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .action span { font-size: 9px; font-weight: 700; }
+    .action.active { background: #4274b5bb; border-color: white; }
+    .action:disabled { opacity: .35; }
+    #fire { background: #aa343488; }
+    #vehicle { background: #91732199; }
+    [hidden] { display: none !important; }
+
+    @media (max-width: 380px), (max-height: 390px) {
+      #actions {
+        grid-template-columns: repeat(3, 52px);
+        gap: 7px;
+      }
+      .action { width: 52px; height: 52px; }
+      #stick { transform: scale(.85); transform-origin: left bottom; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <div id="moveZone">
+    <div id="stick">
+      <div id="sprintHint">↑ AUTO RUN</div>
+      <div id="knob"></div>
+    </div>
+  </div>
+
+  <div id="lookZone"></div>
+  <div id="crosshair"></div>
+  <div id="hud">PROJECT VICE · Loading…</div>
+  <div id="message">Loading Mainmc1.glb…</div>
+
+  <div id="actions">
+    <button class="action" id="sprint" aria-label="Hold to sprint">
+      <svg viewBox="0 0 24 24">
+        <circle cx="15" cy="4" r="2"/>
+        <path d="m12 8 4 3 4 0M12 8l-4 4-4 0m8-4-2 7 5 3 1 4M10 15l-4 6"/>
+      </svg><span>RUN</span>
+    </button>
+
+    <button class="action" id="jump" aria-label="Jump">
+      <svg viewBox="0 0 24 24">
+        <circle cx="12" cy="6" r="2"/>
+        <path d="m5 4 7 6 7-6m-7 6v6m0 0-5 5m5-5 5 5"/>
+      </svg><span>JUMP</span>
+    </button>
+
+    <button class="action" id="fire" aria-label="Hold to fire">
+      <svg viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="7"/>
+        <path d="M12 1v6m0 10v6M1 12h6m10 0h6"/>
+      </svg><span>FIRE</span>
+    </button>
+
+    <button class="action" id="roll" aria-label="Roll">
+      <svg viewBox="0 0 24 24">
+        <path d="M5 8a8 8 0 1 1-1 9M5 8V2m0 6h6"/>
+        <circle cx="12" cy="11" r="2"/>
+        <path d="m9 15 4 3 3-3"/>
+      </svg><span>ROLL</span>
+    </button>
+
+    <button class="action" id="reload" aria-label="Reload">
+      <svg viewBox="0 0 24 24">
+        <path d="M20 7a9 9 0 1 0 1 9M20 7V2m0 5h-5"/>
+      </svg><span>RELOAD</span>
+    </button>
+
+    <button class="action" id="vehicle" aria-label="Enter or exit car">
+      <svg viewBox="0 0 24 24">
+        <path d="m4 10 2-6h12l2 6v9H4Zm0 0h16M7 14h2m6 0h2M6 19v2m12-2v2"/>
+      </svg><span>ENTER</span>
+    </button>
+  </div>
+
+  <!-- Matching versions: compatible with THREE.GLTFLoader. -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
