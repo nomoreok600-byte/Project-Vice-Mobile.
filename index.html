@@ -2,264 +2,835 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#18232e">
-  <title>Project Vice: Mobile</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
+  <meta name="theme-color" content="#0b1020">
+  <title>Grid Tap: 5-Second Blitz</title>
 
   <style>
+    :root {
+      color-scheme: dark;
+      --background: #0b1020;
+      --panel: #141d34;
+      --tile: #203354;
+      --text: #f2f6ff;
+      --muted: #a3b2ce;
+      --green: #91ff70;
+      --purple: #bd96ff;
+      --red: #ff647c;
+    }
+
     * {
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
     }
 
-    html, body {
+    body {
       margin: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: #18232e;
-      color: white;
-      font-family: system-ui, sans-serif;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding:
+        max(16px, env(safe-area-inset-top))
+        max(16px, env(safe-area-inset-right))
+        max(16px, env(safe-area-inset-bottom))
+        max(16px, env(safe-area-inset-left));
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(ellipse at top, #223259 0%, transparent 65%),
+        var(--background);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
       overscroll-behavior: none;
     }
 
-    #game, #lookZone, #moveZone {
-      position: fixed;
-      touch-action: none;
-      user-select: none;
+    button {
+      font: inherit;
+      touch-action: manipulation;
     }
 
-    #game {
-      inset: 0;
-      display: block;
-      width: 100%;
-      height: 100%;
+    .game {
+      width: min(100%, 440px);
     }
 
-    #moveZone {
-      left: 0;
-      top: 30%;
-      bottom: 0;
-      width: 44%;
-      z-index: 2;
-    }
-
-    #lookZone {
-      right: 0;
-      top: 0;
-      bottom: 0;
-      width: 56%;
-      z-index: 2;
-    }
-
-    #stick {
-      position: fixed;
-      left: 28px;
-      bottom: max(28px, env(safe-area-inset-bottom));
-      width: 124px;
-      height: 124px;
-      border: 2px solid #ffffff65;
-      border-radius: 50%;
-      background: #ffffff15;
-      pointer-events: none;
-    }
-
-    #knob {
-      position: absolute;
-      left: 40px;
-      top: 40px;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: #d9eaffaa;
-      border: 2px solid white;
-    }
-
-    #sprintHint {
-      position: absolute;
-      top: -27px;
-      width: 100%;
-      text-align: center;
-      font-size: 12px;
-      color: #b9ffb2;
-    }
-
-    #crosshair {
-      position: fixed;
-      left: 50%;
-      top: 50%;
-      width: 24px;
-      height: 24px;
-      transform: translate(-50%, -50%);
-      z-index: 4;
-      pointer-events: none;
-      color: white;
-      filter: drop-shadow(0 1px 2px black);
-    }
-
-    #crosshair::before, #crosshair::after {
-      content: "";
-      position: absolute;
-      background: currentColor;
-    }
-
-    #crosshair::before {
-      left: 11px;
-      top: 0;
-      width: 2px;
-      height: 24px;
-    }
-
-    #crosshair::after {
-      left: 0;
-      top: 11px;
-      height: 2px;
-      width: 24px;
-    }
-
-    #crosshair.hit { color: #ffce54; }
-
-    #hud, #message {
-      position: fixed;
-      z-index: 5;
-      pointer-events: none;
-      text-shadow: 0 2px 4px black;
-    }
-
-    #hud {
-      top: max(12px, env(safe-area-inset-top));
-      left: max(14px, env(safe-area-inset-left));
-      padding: 9px 13px;
-      border-radius: 12px;
-      background: #10182080;
-      font-size: 14px;
-    }
-
-    #message {
-      top: 18%;
-      left: 10%;
-      width: 80%;
-      text-align: center;
-      font-size: 14px;
-    }
-
-    #actions {
-      position: fixed;
-      right: max(14px, env(safe-area-inset-right));
-      bottom: max(20px, env(safe-area-inset-bottom));
-      z-index: 6;
-      display: grid;
-      grid-template-columns: repeat(3, 62px);
-      gap: 10px;
-    }
-
-    .action {
-      appearance: none;
-      width: 62px;
-      height: 62px;
-      padding: 6px;
+    header {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
       align-items: center;
-      gap: 2px;
-      border: 2px solid #ffffff70;
-      border-radius: 50%;
-      background: #16233188;
-      color: white;
-      touch-action: none;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(22px, 6vw, 30px);
+      letter-spacing: -1px;
+    }
+
+    .subtitle {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .best {
+      color: var(--muted);
+      font-size: 12px;
+      text-align: right;
+    }
+
+    .best strong {
+      display: block;
+      color: var(--text);
+      font-size: 24px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .scores {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .score-card {
+      padding: 12px 16px;
+      border: 1px solid #ffffff14;
+      border-radius: 16px;
+      background: var(--panel);
+    }
+
+    .score-card span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .score-card strong {
+      display: block;
+      font-size: 36px;
+      line-height: 1.2;
+      font-variant-numeric: tabular-nums;
+    }
+
+    #score {
+      color: var(--green);
+    }
+
+    #ghostScore {
+      color: var(--purple);
+    }
+
+    .timer-label,
+    .ghost-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 7px;
+      font-size: 13px;
+    }
+
+    #time {
+      font-size: 22px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+
+    #bonus {
+      display: inline-block;
+      margin-left: 6px;
+      color: var(--green);
+      opacity: 0;
+      font-size: 13px;
+    }
+
+    #bonus.pop {
+      animation: bonus-pop 350ms ease-out;
+    }
+
+    .track {
+      height: 9px;
+      overflow: hidden;
+      border-radius: 20px;
+      background: #ffffff12;
+    }
+
+    .fill {
+      height: 100%;
+      width: 100%;
+      transform-origin: left;
+      transform: scaleX(1);
+      border-radius: inherit;
+      background: var(--green);
+      will-change: transform;
+    }
+
+    #timerPanel.urgent #time {
+      color: var(--red);
+    }
+
+    #timerPanel.urgent .fill {
+      background: var(--red);
+    }
+
+    .ghost-panel {
+      margin-top: 14px;
+    }
+
+    .ghost-label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    #ghostFill {
+      background: var(--purple);
+      transform: scaleX(0);
+    }
+
+    #raceStatus {
+      margin: 12px 0 0;
+      text-align: center;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--purple);
+      min-height: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 14px 0;
+      padding: 5px;
+      border-radius: 20px;
       user-select: none;
+      -webkit-user-select: none;
     }
 
-    .action svg {
-      width: 25px;
-      height: 25px;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
+    .tile {
+      display: grid;
+      place-items: center;
+      aspect-ratio: 1;
+      width: 100%;
+      padding: 0;
+      border: 1px solid #ffffff10;
+      border-radius: 18px;
+      background: var(--tile);
+      color: transparent;
+      cursor: pointer;
+      font-size: clamp(30px, 11vw, 52px);
+      box-shadow: inset 0 -5px 0 #00000020;
+      touch-action: none;
     }
 
-    .action span { font-size: 9px; font-weight: 700; }
-    .action.active { background: #4274b5bb; border-color: white; }
-    .action:disabled { opacity: .35; }
-    #fire { background: #aa343488; }
-    #vehicle { background: #91732199; }
-    [hidden] { display: none !important; }
+    .tile.target {
+      background: var(--green);
+      color: #143a20;
+      border-color: #c4ffb2;
+      box-shadow:
+        inset 0 -5px 0 #00000015,
+        0 0 20px #91ff7025;
+    }
 
-    @media (max-width: 380px), (max-height: 390px) {
-      #actions {
-        grid-template-columns: repeat(3, 52px);
-        gap: 7px;
+    .tile.tapped {
+      animation: tile-tap 130ms ease-out;
+    }
+
+    .tile:focus-visible,
+    .primary:focus-visible {
+      outline: 3px solid white;
+      outline-offset: 3px;
+    }
+
+    .grid.failed {
+      animation: grid-fail 420ms ease-out;
+    }
+
+    .grid.failed .tile {
+      background: #65273a;
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .instructions {
+      margin: 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .instructions strong {
+      color: var(--green);
+    }
+
+    dialog {
+      width: min(90vw, 380px);
+      padding: 28px;
+      border: 1px solid #ffffff26;
+      border-radius: 24px;
+      background: #141d34;
+      color: var(--text);
+      text-align: center;
+      box-shadow: 0 24px 90px #00000080;
+    }
+
+    dialog::backdrop {
+      background: #030711bb;
+    }
+
+    dialog h2 {
+      margin: 0 0 8px;
+      font-size: 30px;
+    }
+
+    #endReason {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .results {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 24px 0 18px;
+    }
+
+    .results div {
+      padding: 16px 8px;
+      border-radius: 14px;
+      background: #ffffff07;
+    }
+
+    .results span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .results strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 42px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    #finalScore {
+      color: var(--green);
+    }
+
+    #finalGhostScore {
+      color: var(--purple);
+    }
+
+    #verdict {
+      font-weight: 700;
+      font-size: 17px;
+    }
+
+    #runStats {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .primary {
+      width: 100%;
+      margin-top: 12px;
+      padding: 15px;
+      border: none;
+      border-radius: 14px;
+      background: var(--green);
+      color: #123120;
+      font-size: 17px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    @keyframes tile-tap {
+      0% { transform: scale(1); }
+      45% { transform: scale(.9); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes bonus-pop {
+      0% { opacity: 1; transform: translateY(5px); }
+      60% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-9px); }
+    }
+
+    @keyframes grid-fail {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-5px); }
+      40%, 80% { transform: translateX(5px); }
+    }
+
+    @media (max-height: 720px) {
+      .game { max-width: 350px; }
+      header { margin-bottom: 10px; }
+      .score-card { padding: 8px 14px; }
+      .score-card strong { font-size: 30px; }
+      .grid { margin: 10px 0; gap: 8px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
       }
-      .action { width: 52px; height: 52px; }
-      #stick { transform: scale(.85); transform-origin: left bottom; }
     }
   </style>
 </head>
+
 <body>
-  <canvas id="game"></canvas>
+  <main class="game">
+    <header>
+      <div>
+        <h1>Grid Tap</h1>
+        <p class="subtitle">5-Second Blitz</p>
+      </div>
+      <div class="best">
+        PERSONAL BEST
+        <strong id="bestScore">0</strong>
+      </div>
+    </header>
 
-  <div id="moveZone">
-    <div id="stick">
-      <div id="sprintHint">↑ AUTO RUN</div>
-      <div id="knob"></div>
+    <section class="scores" aria-label="Current scores">
+      <div class="score-card">
+        <span>YOU</span>
+        <strong id="score">0</strong>
+      </div>
+
+      <div class="score-card">
+        <span>AI GHOST</span>
+        <strong id="ghostScore">0</strong>
+      </div>
+    </section>
+
+    <section id="timerPanel" aria-label="Time remaining">
+      <div class="timer-label">
+        <span>
+          TIME LEFT
+          <span id="bonus" aria-hidden="true">+0.5s</span>
+        </span>
+        <span id="time">5.00s</span>
+      </div>
+
+      <div class="track">
+        <div id="timeFill" class="fill"></div>
+      </div>
+    </section>
+
+    <section class="ghost-panel" aria-label="Ghost progress">
+      <div class="ghost-label">
+        <span>Ghost’s next tile</span>
+        <span id="ghostSpeed">0.75s / tile</span>
+      </div>
+
+      <div class="track">
+        <div id="ghostFill" class="fill"></div>
+      </div>
+    </section>
+
+    <p id="raceStatus">Neck and neck!</p>
+
+    <div id="grid" class="grid" role="group" aria-label="Tap the diamond tile">
+      <!-- Nine buttons are created by JavaScript. -->
     </div>
-  </div>
 
-  <div id="lookZone"></div>
-  <div id="crosshair"></div>
-  <div id="hud">PROJECT VICE · Loading…</div>
-  <div id="message">Loading Mainmc1.glb…</div>
+    <p class="instructions">
+      Tap the <strong>green ◆</strong> tile.
+      Each correct tap adds <strong>0.5 seconds</strong>.<br>
+      One wrong tap ends the run.
+    </p>
+  </main>
 
-  <div id="actions">
-    <button class="action" id="sprint" aria-label="Hold to sprint">
-      <svg viewBox="0 0 24 24">
-        <circle cx="15" cy="4" r="2"/>
-        <path d="m12 8 4 3 4 0M12 8l-4 4-4 0m8-4-2 7 5 3 1 4M10 15l-4 6"/>
-      </svg><span>RUN</span>
-    </button>
+  <dialog id="gameOverDialog" aria-labelledby="endTitle">
+    <h2 id="endTitle">Game Over</h2>
+    <p id="endReason"></p>
 
-    <button class="action" id="jump" aria-label="Jump">
-      <svg viewBox="0 0 24 24">
-        <circle cx="12" cy="6" r="2"/>
-        <path d="m5 4 7 6 7-6m-7 6v6m0 0-5 5m5-5 5 5"/>
-      </svg><span>JUMP</span>
-    </button>
+    <div class="results">
+      <div>
+        <span>YOUR SCORE</span>
+        <strong id="finalScore">0</strong>
+      </div>
+      <div>
+        <span>AI GHOST</span>
+        <strong id="finalGhostScore">0</strong>
+      </div>
+    </div>
 
-    <button class="action" id="fire" aria-label="Hold to fire">
-      <svg viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="7"/>
-        <path d="M12 1v6m0 10v6M1 12h6m10 0h6"/>
-      </svg><span>FIRE</span>
-    </button>
+    <p id="verdict"></p>
+    <p id="runStats"></p>
 
-    <button class="action" id="roll" aria-label="Roll">
-      <svg viewBox="0 0 24 24">
-        <path d="M5 8a8 8 0 1 1-1 9M5 8V2m0 6h6"/>
-        <circle cx="12" cy="11" r="2"/>
-        <path d="m9 15 4 3 3-3"/>
-      </svg><span>ROLL</span>
-    </button>
+    <button id="restart" class="primary">Play Again</button>
+  </dialog>
 
-    <button class="action" id="reload" aria-label="Reload">
-      <svg viewBox="0 0 24 24">
-        <path d="M20 7a9 9 0 1 0 1 9M20 7V2m0 5h-5"/>
-      </svg><span>RELOAD</span>
-    </button>
+  <script>
+    "use strict";
 
-    <button class="action" id="vehicle" aria-label="Enter or exit car">
-      <svg viewBox="0 0 24 24">
-        <path d="m4 10 2-6h12l2 6v9H4Zm0 0h16M7 14h2m6 0h2M6 19v2m12-2v2"/>
-      </svg><span>ENTER</span>
-    </button>
-  </div>
+    const $ = id => document.getElementById(id);
 
-  <!-- Matching versions: compatible with THREE.GLTFLoader. -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-  <script src="game.js"></script>
+    const SETTINGS = {
+      startTime: 5,
+      correctTapBonus: 0.5,
+      initialGhostInterval: 0.75,
+      minimumGhostInterval: 0.5,
+      ghostAcceleration: 0.008,
+      storageKey: "grid-tap-blitz-best-v1"
+    };
+
+    const grid = $("grid");
+    const dialog = $("gameOverDialog");
+    const tiles = [];
+
+    let score = 0;
+    let ghostScore = 0;
+    let timeLeft = SETTINGS.startTime;
+    let isGameOver = false;
+    let targetIndex = -1;
+
+    let startedAt = 0;
+    let deadline = 0;
+    let nextGhostAt = 0;
+    let ghostInterval = SETTINGS.initialGhostInterval;
+
+    let frameId = 0;
+    let modalTimer = 0;
+    let bestScore = readBestScore();
+
+    // Block overlapping fingers so simultaneous presses cannot
+    // accidentally clear several newly generated rounds.
+    let activePointer = null;
+
+    function readBestScore() {
+      try {
+        const value = Number(localStorage.getItem(SETTINGS.storageKey));
+        return Number.isFinite(value) && value >= 0
+          ? Math.floor(value)
+          : 0;
+      } catch {
+        // Gameplay still works when storage is unavailable.
+        return 0;
+      }
+    }
+
+    function saveBestScore() {
+      try {
+        localStorage.setItem(SETTINGS.storageKey, String(bestScore));
+      } catch {
+        // Private browsing or storage restrictions must not stop play.
+      }
+    }
+
+    function ghostSpeedForScore() {
+      return Math.max(
+        SETTINGS.minimumGhostInterval,
+        SETTINGS.initialGhostInterval -
+          score * SETTINGS.ghostAcceleration
+      );
+    }
+
+    function createBoard() {
+      for (let i = 0; i < 9; i++) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "tile";
+        button.dataset.index = String(i);
+        button.setAttribute("aria-label", `Tile ${i + 1}`);
+
+        button.addEventListener("animationend", () => {
+          button.classList.remove("tapped");
+        });
+
+        tiles.push(button);
+        grid.appendChild(button);
+      }
+    }
+
+    function startRound() {
+      const previous = targetIndex;
+
+      if (previous >= 0) {
+        tiles[previous].classList.remove("target");
+        tiles[previous].textContent = "";
+        tiles[previous].setAttribute(
+          "aria-label",
+          `Tile ${previous + 1}`
+        );
+      }
+
+      // Pick any tile except the previous target.
+      // This prevents holding one position from feeling like a shuffle.
+      if (previous < 0) {
+        targetIndex = Math.floor(Math.random() * 9);
+      } else {
+        targetIndex = Math.floor(Math.random() * 8);
+        if (targetIndex >= previous) targetIndex++;
+      }
+
+      const target = tiles[targetIndex];
+      target.classList.add("target");
+      target.textContent = "◆";
+      target.setAttribute(
+        "aria-label",
+        `Target diamond, tile ${targetIndex + 1}`
+      );
+    }
+
+    function startGame() {
+      cancelAnimationFrame(frameId);
+      clearTimeout(modalTimer);
+
+      if (dialog.open) dialog.close();
+
+      score = 0;
+      ghostScore = 0;
+      timeLeft = SETTINGS.startTime;
+      isGameOver = false;
+      activePointer = null;
+      targetIndex = -1;
+
+      grid.classList.remove("failed");
+
+      for (let i = 0; i < tiles.length; i++) {
+        const tile = tiles[i];
+        tile.disabled = false;
+        tile.className = "tile";
+        tile.textContent = "";
+        tile.setAttribute("aria-label", `Tile ${i + 1}`);
+      }
+
+      $("bonus").classList.remove("pop");
+
+      startedAt = performance.now();
+      deadline = startedAt + SETTINGS.startTime * 1000;
+
+      ghostInterval = SETTINGS.initialGhostInterval;
+      nextGhostAt = startedAt + ghostInterval * 1000;
+
+      startRound();
+      render(startedAt);
+      frameId = requestAnimationFrame(tick);
+    }
+
+    // Update from real timestamps rather than subtracting a fixed
+    // amount per frame. Slow frames cannot give extra time.
+    function advanceTo(now) {
+      if (isGameOver) return false;
+
+      // Ghost cannot earn points after the player's clock expires.
+      const effectiveNow = Math.min(now, deadline);
+
+      while (nextGhostAt <= effectiveNow) {
+        ghostScore++;
+        ghostInterval = ghostSpeedForScore();
+        nextGhostAt += ghostInterval * 1000;
+      }
+
+      timeLeft = Math.max(0, (deadline - now) / 1000);
+
+      if (now >= deadline) {
+        finishGame("Time ran out!", deadline);
+        return false;
+      }
+
+      return true;
+    }
+
+    function tick(now) {
+      if (!advanceTo(now)) return;
+      render(now);
+      frameId = requestAnimationFrame(tick);
+    }
+
+    function render(now) {
+      $("score").textContent = String(score);
+      $("ghostScore").textContent = String(ghostScore);
+      $("bestScore").textContent = String(bestScore);
+      $("time").textContent = timeLeft.toFixed(2) + "s";
+
+      // Bonus time is uncapped. The bar represents the initial
+      // five-second reserve; the number displays the full balance.
+      const timeFraction = Math.min(
+        1,
+        Math.max(0, timeLeft / SETTINGS.startTime)
+      );
+
+      $("timeFill").style.transform = `scaleX(${timeFraction})`;
+      $("timerPanel").classList.toggle("urgent", timeLeft <= 1.5);
+
+      const ghostProgress = Math.max(
+        0,
+        Math.min(
+          1,
+          1 - (nextGhostAt - now) / (ghostInterval * 1000)
+        )
+      );
+
+      $("ghostFill").style.transform = `scaleX(${ghostProgress})`;
+      $("ghostSpeed").textContent =
+        ghostInterval.toFixed(2) + "s / tile";
+
+      const lead = score - ghostScore;
+
+      $("raceStatus").textContent = lead > 0
+        ? `You lead by ${lead}!`
+        : lead < 0
+          ? `Ghost leads by ${-lead} — keep going!`
+          : "Neck and neck!";
+
+      $("raceStatus").style.color =
+        lead > 0 ? "var(--green)" : "var(--purple)";
+    }
+
+    function handleTile(index) {
+      if (isGameOver) return;
+
+      const now = performance.now();
+
+      // Check the deadline before granting a bonus.
+      if (!advanceTo(now)) return;
+
+      if (index !== targetIndex) {
+        finishGame("Wrong tile! Tap only the green diamond.", now);
+        return;
+      }
+
+      score++;
+      deadline += SETTINGS.correctTapBonus * 1000;
+      timeLeft = (deadline - now) / 1000;
+
+      // Preserve the ghost's existing fractional progress while
+      // adjusting its interval for the player's new score.
+      const remainingFraction = Math.max(
+        0,
+        Math.min(1, (nextGhostAt - now) / (ghostInterval * 1000))
+      );
+
+      ghostInterval = ghostSpeedForScore();
+      nextGhostAt = now + remainingFraction * ghostInterval * 1000;
+
+      const tile = tiles[index];
+      tile.classList.remove("tapped");
+      void tile.offsetWidth;
+      tile.classList.add("tapped");
+
+      const bonus = $("bonus");
+      bonus.classList.remove("pop");
+      void bonus.offsetWidth;
+      bonus.classList.add("pop");
+
+      startRound();
+      render(now);
+    }
+
+    function finishGame(reason, endedAt) {
+      if (isGameOver) return;
+
+      isGameOver = true;
+      activePointer = null;
+      cancelAnimationFrame(frameId);
+
+      const newBest = score > bestScore;
+      if (newBest) {
+        bestScore = score;
+        saveBestScore();
+      }
+
+      timeLeft = Math.max(0, (deadline - endedAt) / 1000);
+      render(endedAt);
+
+      grid.classList.add("failed");
+      tiles.forEach(tile => {
+        tile.disabled = true;
+      });
+
+      $("endReason").textContent = reason;
+      $("finalScore").textContent = String(score);
+      $("finalGhostScore").textContent = String(ghostScore);
+
+      $("verdict").textContent =
+        score > ghostScore
+          ? "You beat the ghost!"
+          : score < ghostScore
+            ? "The ghost wins this round."
+            : "A perfect tie!";
+
+      const seconds = Math.max(0, (endedAt - startedAt) / 1000);
+      $("runStats").textContent =
+        `${seconds.toFixed(1)} seconds played · ` +
+        (newBest ? "New personal best!" : `Best: ${bestScore}`);
+
+      // Let the red flash appear before presenting the result.
+      modalTimer = setTimeout(() => {
+        if (!isGameOver) return;
+        dialog.showModal();
+        $("restart").focus();
+      }, 240);
+    }
+
+    // Pointer Events give immediate touch, mouse, and pen response.
+    // No separate touchstart/click pair that could double-score.
+    grid.addEventListener("pointerdown", event => {
+      const tile = event.target.closest(".tile");
+
+      if (
+        !tile ||
+        isGameOver ||
+        activePointer !== null ||
+        event.button !== 0 ||
+        !event.isPrimary
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      activePointer = event.pointerId;
+      handleTile(Number(tile.dataset.index));
+    });
+
+    function releasePointer(event) {
+      if (event.pointerId === activePointer) activePointer = null;
+    }
+
+    window.addEventListener("pointerup", releasePointer);
+    window.addEventListener("pointercancel", releasePointer);
+
+    // Keyboard/accessibility activation generates a click with detail 0.
+    grid.addEventListener("click", event => {
+      const tile = event.target.closest(".tile");
+      if (tile && event.detail === 0 && activePointer === null) {
+        handleTile(Number(tile.dataset.index));
+      }
+    });
+
+    window.addEventListener("blur", () => {
+      activePointer = null;
+    });
+
+    // Leaving the page does not pause the countdown.
+    // Reconcile elapsed time immediately when the player returns.
+    document.addEventListener("visibilitychange", () => {
+      activePointer = null;
+      if (!document.hidden && !isGameOver) {
+        advanceTo(performance.now());
+      }
+    });
+
+    dialog.addEventListener("cancel", event => {
+      // Keep the results visible until Play Again is selected.
+      event.preventDefault();
+    });
+
+    $("restart").addEventListener("click", startGame);
+
+    createBoard();
+    startGame();
+  </script>
 </body>
 </html>
